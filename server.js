@@ -16,12 +16,14 @@ mongoose.connect(db,{
 
 //import route
 const userRoute = require('./routes/user')
+const deckRoute = require('./routes/deck')
 // Middleware
 app.use(logger('dev'))
 app.use(bodyParser.json())
 
 //Routes
 app.use('/users',userRoute)
+app.use('/decks',deckRoute)
 
 //Catch error
 app.use((req,res,next) => {

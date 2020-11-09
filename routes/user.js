@@ -4,20 +4,20 @@ const UserController = require('../controllers/user.controller')
 
 const router = require('express-promise-router')()
 
-const {validateParam , schemas} = require('../helpers/routerHelper')
+const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper')
 
 router.route('/')
     .get(UserController.index)
-    .post(UserController.newUser)
+    .post(validateBody(schemas.userSchema),UserController.newUser)
 
 router.route('/:userID')
     .get(validateParam(schemas.idSchema,'userID'),UserController.getUser)
-    .put(UserController.replaceUser)
-    .patch(UserController.updateUser)
+    .put(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userSchema),UserController.replaceUser)
+    .patch(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userOptionalSchema),UserController.updateUser)
 
 router.route('/:userID/decks')
-    .get(UserController.getUserDeck)
-    .post(UserController.newUserDeck)
+    .get(validateParam(schemas.idSchema,'userID'),UserController.getUserDeck)
+    .post(validateParam(schemas.idSchema,'userID'),validateBody(schemas.deckSchema),UserController.newUserDeck)
 
 
 module.exports = router
