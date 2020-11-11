@@ -1,6 +1,18 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Joi = require('@hapi/joi')
+const { JWT_SECRET } = require('../config/index')
+const JWT = require('jsonwebtoken')
+
+const encodedToken = (userID) => {
+    return JWT.sign({ 
+        iss:'Tuan Huynh',
+        sub: userID,
+        iat : new Date().getTime(),
+        exp: new Date().setDate(new Date().getDate() + 3)
+
+    },JWT_SECRET)
+}
 
 const idSchema = Joi.object().keys({
     userID: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
@@ -64,6 +76,28 @@ const replaceUser = async (req,res,next) => {
     return res.status(200).json({success : true})
 }
 
+const secret = async (req,res,next) => {}
+
+const login = async (req,res,next) => {}
+
+const register = async (req,res,next) => {
+    const {firstName,lastName,email,password} = req.value.body
+    
+    const foundUser = await User.findOne({email})
+    if (foundUser) return res.status(403).json({error : {message : 'Email is already in use'}})
+
+    const newUser = new User({firstName,lastName,email,password})
+
+    newUser.save()
+
+    //Encode token
+    const token = encodedToken(newUser._id)
+
+    res.setHeader('Authorization',token)
+
+    return res.status(200).json({success : true})
+}
+
 const updateUser = async (req,res,next) => {
 
     const {userID} = req.value.params
@@ -80,5 +114,8 @@ module.exports = {
     replaceUser,
     updateUser,
     getUserDeck,
-    newUserDeck
+    newUserDeck,
+    login,
+    register,
+    secret,
 }

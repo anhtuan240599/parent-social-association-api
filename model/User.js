@@ -11,6 +11,9 @@ const UserSchema = new Schema({
     email: {
         type: String,
     },
+    password: {
+        type : String,
+    },
     decks: [{
         type: Schema.Types.ObjectId,
         ref : 'Deck'

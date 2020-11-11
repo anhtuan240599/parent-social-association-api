@@ -1,4 +1,5 @@
 const express = require('express')
+const userController = require('../controllers/user.controller')
 
 const UserController = require('../controllers/user.controller')
 
@@ -9,6 +10,13 @@ const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper'
 router.route('/')
     .get(UserController.index)
     .post(validateBody(schemas.userSchema),UserController.newUser)
+
+router.route('/login').post(validateBody(schemas.authLoginSchema),userController.login)
+
+router.route('/register').post(validateBody(schemas.authRegisterSchema),userController.register)
+
+router.route('/secret').get(userController.secret)
+
 
 router.route('/:userID')
     .get(validateParam(schemas.idSchema,'userID'),UserController.getUser)

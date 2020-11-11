@@ -1,3 +1,6 @@
+//config env 
+require('dotenv').config()
+
 const express = require('express')
 const logger = require('morgan')
 const mongoose = require('mongoose')
@@ -5,10 +8,13 @@ const app = express()
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
 
+
+
 //import config
 const db = require('./config/key').MongoURI
 // connect to mongo
 mongoose.connect(db,{
+    useCreateIndex: true,
     useNewUrlParser : true,
     useUnifiedTopology: true
     })
@@ -21,7 +27,7 @@ const deckRoute = require('./routes/deck')
 // Middleware
 app.use(logger('dev'))
 app.use(bodyParser.json())
-app.use(helmet{})
+app.use(helmet())
 
 //Routes
 app.use('/users',userRoute)
