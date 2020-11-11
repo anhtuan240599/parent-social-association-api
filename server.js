@@ -3,6 +3,7 @@ const logger = require('morgan')
 const mongoose = require('mongoose')
 const app = express()
 const bodyParser = require('body-parser')
+const helmet = require('helmet')
 
 //import config
 const db = require('./config/key').MongoURI
@@ -20,6 +21,7 @@ const deckRoute = require('./routes/deck')
 // Middleware
 app.use(logger('dev'))
 app.use(bodyParser.json())
+app.use(helmet{})
 
 //Routes
 app.use('/users',userRoute)

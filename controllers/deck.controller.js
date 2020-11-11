@@ -2,7 +2,11 @@ const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Joi = require('@hapi/joi')
 
+const getDeck = async (req,res,next) => {
+    const deck = await Deck.findById(req.value.params.deckID)
 
+    return res.status(200).json({deck})
+}
 
 const index = async (req,res,next) => {
     const decks = await Deck.find({})
@@ -27,7 +31,34 @@ const newDeck = async (req,res,next) => {
     return res.status(201).json({deck :newDeck})
   
 }
+const replaceDeck = async (req,res,next) => {
+    const { deckID } = req.value.params
+    const newDeck = req.value.body
+    const result = await Deck.findByIdAndUpdate(deckID, newDeck)
+    return res.status(200).json({success : true})
+}
+const updateDeck = async (req,res,next) => {
+    const { deckID } = req.value.params
+    const newDeck = req.value.body
+    const result = await Deck.findByIdAndUpdate(deckID, newDeck)
+    return res.status(200).json({success : true})
 
+}
+const deleteDeck = async (req,res,next) => {
+    const { deckID } = req.value.params
+
+    const deck = await Deck.findById(deckID)
+    const ownerID = deck.owner
+
+    const owner = await User.findById(ownerID)
+
+    await deck.remove()
+
+    owner.decks.pull(deck)
+    await owner.save()
+
+    return res.status(200).json({ success : true })
+}
 
 
 
@@ -35,5 +66,8 @@ const newDeck = async (req,res,next) => {
 module.exports = {
     index,
     newDeck,
-    
+    getDeck,
+    replaceDeck,
+    updateDeck,
+    deleteDeck
 }
