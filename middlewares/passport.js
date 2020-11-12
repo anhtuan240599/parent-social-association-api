@@ -23,9 +23,9 @@ passport.use( new jwt_passport({
 }))
 
 
-passport.use(new localStorage({
+passport.use(new passport_local({
     usernameField: 'email'
-}, (email,password) => {
+}, async (email,password,done) => {
     try{
     const user = await User.findOne({email})
     
