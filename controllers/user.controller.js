@@ -76,9 +76,17 @@ const replaceUser = async (req,res,next) => {
     return res.status(200).json({success : true})
 }
 
-const secret = async (req,res,next) => {}
+const secret = async (req,res,next) => {
+    return res.status(200).json({ success: true })
+}
 
-const login = async (req,res,next) => {}
+const login = async (req,res,next) => {
+    const token = encodedToken(req.user._id)
+
+    res.setHeader('Authorization',token)
+
+    return res.status(200).json({ success:true})
+}
 
 const register = async (req,res,next) => {
     const {firstName,lastName,email,password} = req.value.body

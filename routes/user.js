@@ -7,15 +7,19 @@ const router = require('express-promise-router')()
 
 const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper')
 
+const passport = require('passport')
+
+const passportConfig = require('../middlewares/passport')
+
 router.route('/')
     .get(UserController.index)
     .post(validateBody(schemas.userSchema),UserController.newUser)
 
-router.route('/login').post(validateBody(schemas.authLoginSchema),userController.login)
+router.route('/login').post(validateBody(schemas.authLoginSchema),passport.authenticate('local',{session: false}),userController.login)
 
 router.route('/register').post(validateBody(schemas.authRegisterSchema),userController.register)
 
-router.route('/secret').get(userController.secret)
+router.route('/secret').get(passport.authenticate('jwt',{session : false}),userController.secret)
 
 
 router.route('/:userID')
