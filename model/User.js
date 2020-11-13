@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
+const { string } = require('@hapi/joi')
 const UserSchema = new Schema({
     firstName: {
         type: String
@@ -13,6 +14,19 @@ const UserSchema = new Schema({
     },
     password: {
         type : String,
+    },
+    authGoogleID: {
+        type:String,
+        default:null
+    },
+    authFacebookID: {
+        type:String,
+        default:null
+    },
+    authType: {
+        type:String,
+        enum: ['local','google','facebook'],
+        default: 'local'
     },
     decks: [{
         type: Schema.Types.ObjectId,
@@ -33,6 +47,8 @@ UserSchema.methods.isValidPassword = async function(newPassword) {
 
 UserSchema.pre('save', async function (next) {
     try {
+        if(this.authType !== 'local') next()
+        
         const salt = await bcrypt.genSalt(10)
 
         const passwordHashed = await bcrypt.hash(this.password, salt)

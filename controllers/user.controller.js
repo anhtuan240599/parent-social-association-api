@@ -4,6 +4,23 @@ const Joi = require('@hapi/joi')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
 
+const authFacebook = async(req,res,next) => {
+    const token = encodedToken(req.user._id)
+
+    res.setHeader('Authorization',token)
+
+    return res.status(200).json({ success:true})
+}
+
+const authGoogle = async (req,res,next) => {
+    
+    const token = encodedToken(req.user._id)
+
+    res.setHeader('Authorization',token)
+
+    return res.status(200).json({ success:true})
+}
+
 const encodedToken = (userID) => {
     return JWT.sign({ 
         iss:'Tuan Huynh',
@@ -126,4 +143,6 @@ module.exports = {
     login,
     register,
     secret,
+    authGoogle,
+    authFacebook
 }

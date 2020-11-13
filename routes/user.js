@@ -10,10 +10,15 @@ const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper'
 const passport = require('passport')
 
 const passportConfig = require('../middlewares/passport')
+const { session } = require('passport')
 
 router.route('/')
     .get(UserController.index)
     .post(validateBody(schemas.userSchema),UserController.newUser)
+
+router.route('/auth/facebook').post(passport.authenticate('facebook-token', {session:  false }),userController.authFacebook)
+
+router.route('/auth/google').post(passport.authenticate('google-plus-token', {session:  false }),userController.authGoogle)
 
 router.route('/login').post(validateBody(schemas.authLoginSchema),passport.authenticate('local',{session: false}),userController.login)
 
