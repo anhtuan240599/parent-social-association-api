@@ -7,10 +7,10 @@
                     <a href="#">Auth</a>
                 </div>
                 <ul class="ml_auto items">
-                    <li><router-link: to="{name :'Home'}">Home</router-link></li>
-                    <li><router-link: to="{name :'Secret'}">Secret</router-link></li>
-                    <li><router-link: to="{name :'Login'}">Login</router-link></li>
-                    <li><router-link: to="{name :'Register'}">Register</router-link></li>
+                    <li><router-link :to="{name :'Home'}">Home</router-link></li>
+                    <li><router-link :to="{name :'Secret'}">Secret</router-link></li>
+                    <li><router-link :to="{name :'Login'}">Login</router-link></li>
+                    <li><router-link :to="{name :'Register'}">Register</router-link></li>
                 </ul>
             </div>
         </div>

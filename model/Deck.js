@@ -12,6 +12,9 @@ const DeckSchema = new Schema({
     owner: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    image: {
+        type: Array
     }
     
 })

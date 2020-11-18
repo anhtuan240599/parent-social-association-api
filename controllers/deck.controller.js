@@ -2,6 +2,7 @@ const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Joi = require('@hapi/joi')
 
+
 const getDeck = async (req,res,next) => {
     const deck = await Deck.findById(req.value.params.deckID)
 
@@ -18,11 +19,13 @@ const newDeck = async (req,res,next) => {
    
     const owner = await User.findById(req.body.owner)
 
-    const deck = req.value.body
+    const deck = req.body
+    
     delete deck.owner
 
     deck.owner = owner._id
     const newDeck = new Deck(deck)
+    newDeck.image = req.file
     await newDeck.save()
 
     owner.decks.push(newDeck._id)

@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const app = express()
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
-
+const cors = require('cors')
 
 
 //import config
@@ -25,6 +25,7 @@ mongoose.connect(db,{
 const userRoute = require('./routes/user')
 const deckRoute = require('./routes/deck')
 // Middleware
+app.use(cors())
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(helmet())
@@ -54,5 +55,5 @@ app.use((err,req,res,next) =>  {
 })
 
 //start server
-const port = app.get('port') || 3000
+const port = app.get('port') || 4000
 app.listen(port, () => console.log(`Server listening on port ${port}`))
