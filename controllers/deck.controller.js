@@ -1,6 +1,7 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Joi = require('@hapi/joi')
+const verifyToken = require("../middlewares/verify-token")
 
 
 const getDeck = async (req,res,next) => {

@@ -102,7 +102,7 @@ const login = async (req,res,next) => {
 
     res.setHeader('Authorization',token)
 
-    return res.status(200).json({ success:true})
+    return res.status(200).json({ success:true })
 }
 
 const register = async (req,res,next) => {
@@ -116,11 +116,13 @@ const register = async (req,res,next) => {
     await newUser.save()
 
     //Encode token
-    const token = encodedToken(newUser._id)
+    const token = JWT.sign(newUser.toJSON(), process.env.SECRET,{
+        expiresIn: 6048000
+    });
 
-    res.setHeader('Authorization',token)
+    
 
-    return res.status(200).json({success : true})
+    return res.status(200).json({success : true,token: token})
 }
 
 const updateUser = async (req,res,next) => {
