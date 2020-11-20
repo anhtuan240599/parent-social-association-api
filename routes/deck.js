@@ -9,7 +9,7 @@ const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper'
 
 router.route('/')
     .get(DeckController.index)
-    .post(validateBody(schemas.newDeckSchema),upload_photo.single('image',1),DeckController.newDeck)
+    .post(upload_photo.single('image',1),DeckController.newDeck)
 
 router.route('/:deckID')
     .get(validateParam(schemas.idSchema,'deckID'),DeckController.getDeck)

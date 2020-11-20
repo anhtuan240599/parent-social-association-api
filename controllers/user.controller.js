@@ -113,7 +113,7 @@ const register = async (req,res,next) => {
 
     const newUser = new User({firstName,lastName,email,password})
 
-    newUser.save()
+    await newUser.save()
 
     //Encode token
     const token = encodedToken(newUser._id)
