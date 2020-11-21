@@ -31,7 +31,7 @@ app.use(bodyParser.json())
 app.use(helmet())
 
 //Routes
-app.use('/users',userRoute)
+app.use('/api/auth',userRoute)
 app.use('/decks',deckRoute)
 
 //Catch error
@@ -55,5 +55,5 @@ app.use((err,req,res,next) =>  {
 })
 
 //start server
-const port = app.get('port') || 4000
+const port = app.get('port') || 3000
 app.listen(port, () => console.log(`Server listening on port ${port}`))

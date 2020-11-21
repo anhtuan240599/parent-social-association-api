@@ -45,6 +45,12 @@ UserSchema.methods.isValidPassword = async function(newPassword) {
     }
 }
 
+UserSchema.methods.comparePassword = function (password,next) {
+    let user = this;
+    return bcrypt.compareSync(password, user.password)
+    
+}
+
 UserSchema.pre('save', async function (next) {
     try {
         if(this.authType !== 'local') next()

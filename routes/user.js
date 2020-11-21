@@ -10,7 +10,10 @@ const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper'
 const passport = require('passport')
 
 const passportConfig = require('../middlewares/passport')
+
 const { session } = require('passport')
+
+const verifyToken = require('../middlewares/verify-token')
 
 router.route('/')
     .get(UserController.index)
@@ -20,12 +23,15 @@ router.route('/auth/facebook').post(passport.authenticate('facebook-token', {ses
 
 router.route('/auth/google').post(passport.authenticate('google-plus-token', {session:  false }),userController.authGoogle)
 
-router.route('/login').post(validateBody(schemas.authLoginSchema),passport.authenticate('local',{session: false}),userController.login)
+// router.route('/login').post(validateBody(schemas.authLoginSchema),passport.authenticate('local',{session: false}),userController.login)
+
+router.route('/login').post(userController.login)
 
 router.route('/register').post(validateBody(schemas.authRegisterSchema),userController.register)
 
 router.route('/secret').get(passport.authenticate('jwt',{session : false}),userController.secret)
 
+router.route('/user').get(verifyToken,userController.foundUser)
 
 router.route('/:userID')
     .get(validateParam(schemas.idSchema,'userID'),UserController.getUser)

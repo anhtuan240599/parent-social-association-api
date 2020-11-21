@@ -31,6 +31,18 @@ const encodedToken = (userID) => {
     },JWT_SECRET)
 }
 
+const foundUser = async (req,res,next) => {
+   
+        let foundUser = await User.findOne({ _id: req.decoded._id })
+        if (foundUser) {
+            res.json({
+                success: true,
+                user: foundUser
+            })
+        }
+   
+}
+
 const idSchema = Joi.object().keys({
     userID: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
 })
@@ -97,12 +109,29 @@ const secret = async (req,res,next) => {
     return res.status(200).json({ success: true })
 }
 
+// const login = async (req,res,next) => {
+//     const token = encodedToken(req.user._id)
+
+//     res.setHeader('Authorization',token)
+
+//     return res.status(200).json({ success:true })
+// }
+
 const login = async (req,res,next) => {
-    const token = encodedToken(req.user._id)
-
-    res.setHeader('Authorization',token)
-
-    return res.status(200).json({ success:true })
+    
+    const foundUser = await User.findOne({ email: req.body.email })
+    if(!foundUser) {
+        res.status(403).json({success: false})
+    } else {
+        if(foundUser.comparePassword(req.body.password)) {
+            let token = JWT.sign(foundUser.toJSON(),process.env.SECRET, {
+                expiresIn : 6048000
+            })
+            res.status(200).json({success:true,token:token})
+        } else {
+            res.status(403).json({success: false})
+        }
+    }
 }
 
 const register = async (req,res,next) => {
@@ -146,5 +175,6 @@ module.exports = {
     register,
     secret,
     authGoogle,
-    authFacebook
+    authFacebook,
+    foundUser
 }
