@@ -98,10 +98,16 @@ const newUserDeck = async (req,res,next) => {
 }
 
 const replaceUser = async (req,res,next) => {
-
-    const {userID} = req.value.params
-    const newUser = req.value.body
-    const result = await User.findByIdAndUpdate(userID, newUser)
+    const foundUser = await User.findOne({_id: req.decoded._id })
+    if(foundUser)
+    {
+        const {firstName,lastName,email,password} = req.body
+        if(firstName) foundUser.firstName = firstName
+        if(lastName)  foundUser.lastName= lastName
+        if(email)     foundUser.email = email
+        if(password)  foundUser.password = password
+        await foundUser.save();
+    }
     return res.status(200).json({success : true})
 }
 

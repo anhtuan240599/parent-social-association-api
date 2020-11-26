@@ -24,6 +24,7 @@ mongoose.connect(db,{
 //import route
 const userRoute = require('./routes/user')
 const deckRoute = require('./routes/deck')
+const reviewRoute = require('./routes/review')
 // Middleware
 app.use(cors())
 app.use(logger('dev'))
@@ -33,6 +34,7 @@ app.use(helmet())
 //Routes
 app.use('/api/auth',userRoute)
 app.use('/decks',deckRoute)
+app.use('/reviews',reviewRoute)
 
 //Catch error
 app.use((req,res,next) => {

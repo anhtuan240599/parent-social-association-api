@@ -1,7 +1,8 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Joi = require('@hapi/joi')
-const verifyToken = require("../middlewares/verify-token")
+const cloudinary = require('../middlewares/cloudinary')
+const upload = require('../middlewares/upload-photo')
 
 
 const getDeck = async (req,res,next) => {
@@ -26,7 +27,22 @@ const newDeck = async (req,res,next) => {
 
     deck.owner = owner._id
     const newDeck = new Deck(deck)
-    newDeck.image = req.file
+
+    if(req.files)
+    {
+        const urls = []
+        const ids = []
+        for (const file of req.files) {
+            const {path} = file
+            const result = await cloudinary.uploader.upload(path);
+            urls.push(result.secure_url)
+            ids.push(result.public_id)
+            
+        }
+        newDeck.image = urls
+        newDeck.cloudinaryID = ids
+    }
+    
     await newDeck.save()
 
     owner.decks.push(newDeck._id)

@@ -1,15 +1,16 @@
 const express = require('express')
-const upload_photo = require('../middlewares/upload-photo')
+const router = require('express-promise-router')()
+const upload = require('../middlewares/upload-photo')
 
 const DeckController = require('../controllers/deck.controller')
 
-const router = require('express-promise-router')()
+
 
 const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper')
 
 router.route('/')
     .get(DeckController.index)
-    .post(upload_photo.single('image',1),DeckController.newDeck)
+    .post(upload.array('image',20),DeckController.newDeck)
 
 router.route('/:deckID')
     .get(validateParam(schemas.idSchema,'deckID'),DeckController.getDeck)

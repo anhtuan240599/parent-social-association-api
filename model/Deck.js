@@ -15,7 +15,11 @@ const DeckSchema = new Schema({
     },
     image: {
         type: Array
-    }
+    },
+    cloudinaryID: {
+        type: Array
+    },
+    rating: [{ type: Schema.Types.ObjectId, ref:"Review"}]
     
 })
 
