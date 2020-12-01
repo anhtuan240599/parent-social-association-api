@@ -14,12 +14,14 @@ const DeckSchema = new Schema({
         ref: 'User'
     },
     image: {
-        type: Array
+        type: Object
     },
     cloudinaryID: {
         type: Array
     },
-    rating: [{ type: Schema.Types.ObjectId, ref:"Review"}]
+    rating: {
+        type: false
+    }
     
 })
 

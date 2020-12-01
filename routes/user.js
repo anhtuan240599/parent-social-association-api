@@ -41,8 +41,8 @@ router.route('/:userID')
     .patch(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userOptionalSchema),UserController.updateUser)
 
 router.route('/:userID/decks')
-    .get(validateParam(schemas.idSchema,'userID'),UserController.getUserDeck)
-    .post(validateParam(schemas.idSchema,'userID'),validateBody(schemas.deckSchema),UserController.newUserDeck)
+    .get(UserController.getUserDeck)
+    .post(UserController.newUserDeck)
 
 
 module.exports = router
