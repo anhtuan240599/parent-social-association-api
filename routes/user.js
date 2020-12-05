@@ -1,23 +1,17 @@
 const express = require('express')
 const userController = require('../controllers/user.controller')
 
-const UserController = require('../controllers/user.controller')
-
 const router = require('express-promise-router')()
-
-const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper')
 
 const passport = require('passport')
 
-const passportConfig = require('../middlewares/passport')
-
-const { session } = require('passport')
+const upload = require('../middlewares/upload-photo')
 
 const verifyToken = require('../middlewares/verify-token')
 
 router.route('/')
-    .get(UserController.index)
-    .post(validateBody(schemas.userSchema),UserController.newUser)
+    .get(userController.index)
+    // .post(validateBody(schemas.userSchema),UserController.newUser)
 
 router.route('/auth/facebook').post(passport.authenticate('facebook-token', {session:  false }),userController.authFacebook)
 
@@ -27,22 +21,26 @@ router.route('/auth/google').post(passport.authenticate('google-plus-token', {se
 
 router.route('/login').post(userController.login)
 
-router.route('/register').post(validateBody(schemas.authRegisterSchema),userController.register)
+router.route('/register').post(userController.register)
 
 router.route('/secret').get(passport.authenticate('jwt',{session : false}),userController.secret)
 
+router.route('/year')
+    .get(userController.getYear)
+    .post(userController.postYear)
+
 router.route('/user')
     .get(verifyToken,userController.foundUser)
-    .put(verifyToken,UserController.replaceUser)
+    .put(verifyToken,upload.single('image',1),userController.replaceUser)
 
 router.route('/:userID')
-    .get(validateParam(schemas.idSchema,'userID'),UserController.getUser)
+    .get(userController.getUser)
     // .put(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userSchema),UserController.replaceUser)
-    .patch(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userOptionalSchema),UserController.updateUser)
+    .patch(userController.updateUser)
 
 router.route('/:userID/decks')
-    .get(UserController.getUserDeck)
-    .post(UserController.newUserDeck)
+    .get(userController.getUserDeck)
+    .post(userController.newUserDeck)
 
 
 module.exports = router

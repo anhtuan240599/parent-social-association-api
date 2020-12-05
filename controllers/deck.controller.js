@@ -25,7 +25,7 @@ const index = async (req,res,next) => {
 
 const newDeck = async (req,res,next) => {
    
-    const owner = await User.findById(req.body.owner)
+    const owner = await User.findOne({ _id : req.decoded._id})
 
     const deck = req.body
     

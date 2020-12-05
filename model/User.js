@@ -3,10 +3,13 @@ const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
 const { string } = require('@hapi/joi')
 const UserSchema = new Schema({
-    firstName: {
+    fullName: {
         type: String
     },
-    lastName: {
+    name: {
+        type: String,
+    },
+    avatar:{
         type: String,
     },
     email: {
@@ -14,6 +17,10 @@ const UserSchema = new Schema({
     },
     password: {
         type : String,
+    },
+    yearID:{
+        type: Schema.Types.ObjectId,
+        ref: "Year"
     },
     authGoogleID: {
         type:String,

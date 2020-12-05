@@ -4,13 +4,14 @@ const upload = require('../middlewares/upload-photo')
 
 const DeckController = require('../controllers/deck.controller')
 
+const verifyToken = require('../middlewares/verify-token')
 
 
 const {validateParam ,validateBody, schemas} = require('../helpers/routerHelper')
 
 router.route('/')
     .get(DeckController.index)
-    .post(upload.array('image',20),DeckController.newDeck)
+    .post(verifyToken,upload.array('image',20),DeckController.newDeck)
 
 router.route('/:deckID')
     .get(validateParam(schemas.idSchema,'deckID'),DeckController.getDeck)

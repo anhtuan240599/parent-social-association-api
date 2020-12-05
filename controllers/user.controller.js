@@ -1,8 +1,10 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
+const Year = require('../model/Year')
 const Joi = require('@hapi/joi')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
+const cloudinary = require('../middlewares/cloudinary')
 
 const authFacebook = async(req,res,next) => {
     const token = encodedToken(req.user._id)
@@ -34,6 +36,8 @@ const encodedToken = (userID) => {
 const foundUser = async (req,res,next) => {
    
         let foundUser = await User.findOne({ _id: req.decoded._id })
+        .populate("yearID")
+        .exec();
         if (foundUser) {
             res.json({
                 success: true,
@@ -49,9 +53,11 @@ const idSchema = Joi.object().keys({
 
 const getUser = async (req,res,next) => {
     
-    const {userID} = req.value.params
+    const {userID} = req.params
     const user = await User.findById(userID)
-    console.log(user)
+        .populate('decks')
+        .populate('yearID')
+        .exec()
     return res.status(200).json({user})
 
 }
@@ -97,15 +103,31 @@ const newUserDeck = async (req,res,next) => {
     res.status(201).json({deck:newDeck})
 }
 
+const postYear = async (req,res,next) => {
+    const newYear = new Year();
+    newYear.schoolYear = req.body.schoolYear
+
+    await newYear.save()
+
+    return res.status(200).json({success:true})
+}
+const getYear = async (req,res,next) => {
+    const foundYear = await Year.find({})
+    return res.status(200).json({success:true,foundYear})
+}
+
 const replaceUser = async (req,res,next) => {
     const foundUser = await User.findOne({_id: req.decoded._id })
     if(foundUser)
     {
-        const {firstName,lastName,email,password} = req.body
-        if(firstName) foundUser.firstName = firstName
-        if(lastName)  foundUser.lastName= lastName
+        const {name,email,password} = req.body
+        if(name) foundUser.name = name
         if(email)     foundUser.email = email
         if(password)  foundUser.password = password
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path)
+            foundUser.avatar =  result.secure_url
+        }
         await foundUser.save();
     }
     return res.status(200).json({success : true})
@@ -125,7 +147,7 @@ const secret = async (req,res,next) => {
 
 const login = async (req,res,next) => {
     
-    const foundUser = await User.findOne({ email: req.body.email })
+    const foundUser = await User.findOne({ name: req.body.name })
     if(!foundUser) {
         res.status(403).json({success: false})
     } else {
@@ -141,12 +163,12 @@ const login = async (req,res,next) => {
 }
 
 const register = async (req,res,next) => {
-    const {firstName,lastName,email,password} = req.value.body
+    const {name,email,password,yearID} = req.body
     
     const foundUser = await User.findOne({email})
     if (foundUser) return res.status(403).json({error : {message : 'Email is already in use'}})
 
-    const newUser = new User({firstName,lastName,email,password})
+    const newUser = new User({name,email,password,yearID})
 
     await newUser.save()
 
@@ -182,5 +204,7 @@ module.exports = {
     secret,
     authGoogle,
     authFacebook,
-    foundUser
+    foundUser,
+    postYear,
+    getYear
 }
