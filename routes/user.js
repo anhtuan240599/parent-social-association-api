@@ -29,6 +29,9 @@ router.route('/year')
     .get(userController.getYear)
     .post(userController.postYear)
 
+router.route('/lostPassword')
+    .post(userController.lostPassword)
+
 router.route('/user')
     .get(verifyToken,userController.foundUser)
     .put(verifyToken,upload.single('image',1),userController.replaceUser)

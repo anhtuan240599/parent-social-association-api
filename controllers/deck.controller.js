@@ -3,6 +3,9 @@ const Deck = require('../model/Deck')
 const Joi = require('@hapi/joi')
 const cloudinary = require('../middlewares/cloudinary')
 const upload = require('../middlewares/upload-photo')
+const fullTextSearch = require('fulltextsearch');
+
+const fullTextSearchVi = fullTextSearch.vi;
 
 
 const getDeck = async (req,res,next) => {
@@ -15,12 +18,24 @@ const getDeck = async (req,res,next) => {
 }
 
 const index = async (req,res,next) => {
-    const decks = await Deck.find()
+    if (req.query.name)
+    {
+        const regex = new RegExp(fullTextSearchVi(req.query.name),'gi');
+        const decks = await Deck.find({name : regex})
         .populate("owner")
         .populate("reviews")
         .exec()
 
-    return res.status(200).json({success:true,decks:decks})
+        return res.status(200).json({success:true,decks:decks})
+    } else {
+        const decks = await Deck.find()
+        .populate("owner")
+        .populate("reviews")
+        .exec()
+
+        return res.status(200).json({success:true,decks:decks})
+    }
+    
 }
 
 const newDeck = async (req,res,next) => {
