@@ -147,18 +147,24 @@ const getYear = async (req, res, next) => {
 const replaceUser = async (req, res, next) => {
     const foundUser = await User.findOne({ _id: req.decoded._id })
     if (foundUser) {
-        const { name, email, password } = req.body
+        const { name, email, password, fullName, role , gender , phone } = req.body
         if (name) foundUser.name = name
         if (email) foundUser.email = email
         if (password) foundUser.password = password
+        if (fullName) foundUser.fullName = fullName
+        if (role) foundUser.role = role
+        if (gender) foundUser.gender = gender
+        if (phone) foundUser.phone = phone
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path)
             foundUser.avatar = result.secure_url
         }
+        
         await foundUser.save();
     }
     return res.status(200).json({ success: true })
 }
+
 
 const secret = async (req, res, next) => {
     return res.status(200).json({ success: true })

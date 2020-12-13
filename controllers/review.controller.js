@@ -6,10 +6,10 @@ const cloudinary = require('../middlewares/cloudinary')
 
 const reviewDeck = async (req,res,next) => {
     const review = new Review();
-    const {headline , body , rating } = req.body
+    const {headline , body  } = req.body
     review.headline = headline
     review.body = body
-    review.rating = rating
+    
     if (req.file) {
         const result = await cloudinary.uploader.upload(req.file.path)
         review.image = result.secure_url

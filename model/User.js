@@ -22,6 +22,18 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Year"
     },
+    role: {
+        type:String
+    },
+    phone:{
+        type: String
+    },
+    gender: {
+        type: String
+    },
+    background:{
+        type: String
+    },
     authGoogleID: {
         type:String,
         default:null

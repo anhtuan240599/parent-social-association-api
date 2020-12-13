@@ -8,42 +8,41 @@ const fullTextSearch = require('fulltextsearch');
 const fullTextSearchVi = fullTextSearch.vi;
 
 
-const getDeck = async (req,res,next) => {
-    const deck = await Deck.findById(req.value.params.deckID)
+const getDeck = async (req, res, next) => {
+    const deck = await Deck.findById(req.params.deckID)
         .populate("owner")
         .populate("reviews")
         .exec()
 
-    return res.status(200).json({deck})
+    return res.status(200).json({ deck })
 }
 
-const index = async (req,res,next) => {
-    if (req.query.name)
-    {
-        const regex = new RegExp(fullTextSearchVi(req.query.name),'gi');
-        const decks = await Deck.find({name : regex})
-        .populate("owner")
-        .populate("reviews")
-        .exec()
+const index = async (req, res, next) => {
+    if (req.query.name) {
+        const regex = new RegExp(fullTextSearchVi(req.query.name), 'gi');
+        const decks = await Deck.find({ name: regex })
+            .populate("owner")
+            .populate("reviews")
+            .exec()
 
-        return res.status(200).json({success:true,decks:decks})
+        return res.status(200).json({ success: true, decks: decks })
     } else {
         const decks = await Deck.find()
-        .populate("owner")
-        .populate("reviews")
-        .exec()
+            .populate("owner")
+            .populate("reviews")
+            .exec()
 
-        return res.status(200).json({success:true,decks:decks})
+        return res.status(200).json({ success: true, decks: decks })
     }
-    
+
 }
 
-const newDeck = async (req,res,next) => {
-   
-    const owner = await User.findOne({ _id : req.decoded._id})
+const newDeck = async (req, res, next) => {
+
+    const owner = await User.findOne({ _id: req.decoded._id })
 
     const deck = req.body
-    
+
     delete deck.owner
 
     deck.owner = owner._id
@@ -58,51 +57,67 @@ const newDeck = async (req,res,next) => {
     //         const result = await cloudinary.uploader.upload(path);
     //         urls.push(result.secure_url)
     //         ids.push(result.public_id)
-            
+
     //     }
-        
+
     //     newDeck.image = urls
     //     newDeck.cloudinaryID = ids
     // } 
-    if(req.files)
-    {
+    if (req.files) {
         const urls = []
         const ids = []
         for (const File of req.files) {
-            const {path} = File
+            const { path } = File
             const result = await cloudinary.uploader.upload(path);
             urls.push(result.secure_url)
             ids.push(result.public_id)
-            
+
         }
-        
+
         newDeck.image = urls
         newDeck.cloudinaryID = ids
-    } 
-    
+    }
+
     await newDeck.save()
 
     owner.decks.push(newDeck._id)
     await owner.save()
 
-    return res.status(201).json({deck :newDeck})
-  
-}
-const replaceDeck = async (req,res,next) => {
-    const { deckID } = req.value.params
-    const newDeck = req.value.body
-    const result = await Deck.findByIdAndUpdate(deckID, newDeck)
-    return res.status(200).json({success : true})
-}
-const updateDeck = async (req,res,next) => {
-    const { deckID } = req.value.params
-    const newDeck = req.value.body
-    const result = await Deck.findByIdAndUpdate(deckID, newDeck)
-    return res.status(200).json({success : true})
+    return res.status(201).json({ deck: newDeck })
 
 }
-const deleteDeck = async (req,res,next) => {
-    const { deckID } = req.value.params
+const replaceDeck = async (req, res, next) => {
+    
+        const { deckID } = req.params
+        const newDeck = req.body
+
+        const result = await Deck.findByIdAndUpdate(deckID, newDeck)
+        return res.status(200).json({ success: true })
+   
+}
+const updateDeck = async (req, res, next) => {
+    const { deckID } = req.params
+    const newDeck = req.body
+    if (req.files) {
+        const urls = []
+        const ids = []
+        for (const File of req.files) {
+            const { path } = File
+            const result = await cloudinary.uploader.upload(path);
+            urls.push(result.secure_url)
+            ids.push(result.public_id)
+
+        }
+
+        newDeck.image = urls
+        newDeck.cloudinaryID = ids
+    }
+    const result = await Deck.findByIdAndUpdate(deckID, newDeck)
+    return res.status(200).json({ success: true })
+
+}
+const deleteDeck = async (req, res, next) => {
+    const { deckID } = req.params
 
     const deck = await Deck.findById(deckID)
     const ownerID = deck.owner
@@ -114,7 +129,7 @@ const deleteDeck = async (req,res,next) => {
     owner.decks.pull(deck)
     await owner.save()
 
-    return res.status(200).json({ success : true })
+    return res.status(200).json({ success: true })
 }
 
 
