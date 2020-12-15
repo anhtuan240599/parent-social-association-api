@@ -35,11 +35,12 @@ router.route('/lostPassword')
 router.route('/user')
     .get(verifyToken,userController.foundUser)
     .put(verifyToken,upload.single('image',1),userController.replaceUser)
+    .patch(verifyToken,userController.updateUser)
 
 router.route('/:userID')
     .get(userController.getUser)
     // .put(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userSchema),UserController.replaceUser)
-    .patch(userController.updateUser)
+    
 
 router.route('/:userID/decks')
     .get(userController.getUserDeck)

@@ -1,7 +1,6 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Year = require('../model/Year')
-const bcrypt = require('bcryptjs')
 const Joi = require('@hapi/joi')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
@@ -148,9 +147,10 @@ const getYear = async (req, res, next) => {
 const replaceUser = async (req, res, next) => {
     const foundUser = await User.findOne({ _id: req.decoded._id })
     if (foundUser) {
-        const { name, email, password, password2, fullName, role , gender , phone } = req.body
+        const { name, email, fullName, role , password , password2 , gender , phone } = req.body
         if (name) foundUser.name = name
         if (email) foundUser.email = email
+        if (fullName) foundUser.fullName = fullName
         if (password)
         {
            
@@ -162,7 +162,6 @@ const replaceUser = async (req, res, next) => {
                 foundUser.password = password2
             }
         }
-        if (fullName) foundUser.fullName = fullName
         if (role) foundUser.role = role
         if (gender) foundUser.gender = gender
         if (phone) foundUser.phone = phone
@@ -170,7 +169,6 @@ const replaceUser = async (req, res, next) => {
             const result = await cloudinary.uploader.upload(req.file.path)
             foundUser.avatar = result.secure_url
         }
-        
         await foundUser.save();
     }
     return res.status(200).json({ success: true })
@@ -227,11 +225,34 @@ const register = async (req, res, next) => {
 }
 
 const updateUser = async (req, res, next) => {
-
-    const { userID } = req.value.params
-    const newUser = req.value.body
-    const result = await User.findByIdAndUpdate(userID, newUser)
+    const foundUser = await User.findOne({ _id: req.decoded._id })
+    if (foundUser) {
+        const { name, email, fullName, role , password , password2 , gender , phone } = req.body
+        if (name) foundUser.name = name
+        if (email) foundUser.email = email
+        if (fullName) foundUser.fullName = fullName
+        if (password)
+        {
+           
+            if (!foundUser.comparePassword(password))
+            {    
+                return res.status(400).json({message: "sai mat khau cu" ,})
+            }
+            else {
+                foundUser.password = password2
+            }
+        }
+        if (role) foundUser.role = role
+        if (gender) foundUser.gender = gender
+        if (phone) foundUser.phone = phone
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path)
+            foundUser.avatar = result.secure_url
+        }
+        await foundUser.save();
+    }
     return res.status(200).json({ success: true })
+
 
 }
 

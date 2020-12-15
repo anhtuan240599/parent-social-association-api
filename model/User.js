@@ -74,6 +74,8 @@ UserSchema.methods.comparePassword = function (password,next) {
 UserSchema.pre('save', async function (next) {
     try {
         if(this.authType !== 'local') next()
+
+        if(this.password.length > 50) next()
         
         const salt = await bcrypt.genSalt(10)
 
