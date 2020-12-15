@@ -1,6 +1,7 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
 const Year = require('../model/Year')
+const bcrypt = require('bcryptjs')
 const Joi = require('@hapi/joi')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
@@ -147,10 +148,20 @@ const getYear = async (req, res, next) => {
 const replaceUser = async (req, res, next) => {
     const foundUser = await User.findOne({ _id: req.decoded._id })
     if (foundUser) {
-        const { name, email, password, fullName, role , gender , phone } = req.body
+        const { name, email, password, password2, fullName, role , gender , phone } = req.body
         if (name) foundUser.name = name
         if (email) foundUser.email = email
-        if (password) foundUser.password = password
+        if (password)
+        {
+           
+            if (!foundUser.comparePassword(password))
+            {    
+                return res.status(400).json({message: "sai mat khau cu" ,})
+            }
+            else {
+                foundUser.password = password2
+            }
+        }
         if (fullName) foundUser.fullName = fullName
         if (role) foundUser.role = role
         if (gender) foundUser.gender = gender

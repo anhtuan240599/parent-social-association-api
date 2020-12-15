@@ -8,6 +8,8 @@ const app = express()
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
 const cors = require('cors')
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
 
 
 //import config
@@ -58,6 +60,19 @@ app.use((err,req,res,next) =>  {
     })
 })
 
+//Socket 
+io.on("connection",(socket) => {
+    console.log("Co nguoi ket noi : " + socket.id );
+
+    socket.on('Created', (data) => {
+        socket.emit('Created',data)
+    })
+
+    socket.on('chat-message', (data) => {
+        socket.broadcast.emit('chat-message',data)
+    })
+})
+
 //start server
 const port = app.get('port') || 3000
-app.listen(port, () => console.log(`Server listening on port ${port}`))
+server.listen(port, () => console.log(`Server listening on port ${port}`))
