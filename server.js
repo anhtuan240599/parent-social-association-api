@@ -71,7 +71,28 @@ io.on("connection",(socket) => {
     socket.on('chat-message', (data) => {
         socket.broadcast.emit('chat-message',data)
     })
+
+    socket.on('typing' , (data) => {
+        
+        socket.broadcast.emit('typing', data)
+    })
+    socket.on('stopTyping' , (data) => {
+        socket.broadcast.emit('stopTyping',data)
+    })
+    socket.on('joined',(data) => {
+        socket.broadcast.emit('joined',data)
+    })
+    //  user comment 
+    socket.on('user-comment', (data) => {
+        io.sockets.emit("user-comment",data )
+     })
 })
+
+app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+ });
 
 //start server
 const port = app.get('port') || 3000

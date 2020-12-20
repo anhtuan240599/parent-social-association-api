@@ -26,6 +26,21 @@ const reviewDeck = async (req,res,next) => {
     }
 }
 
+const putReviewDeck = async(req,res,next) => {
+    const review = await Review.findById(req.params.reviewID)
+    if (req.body.body)
+    {
+        review.body = req.body.body
+    }
+    await review.save()
+    return res.status(200).json({success: true})
+}
+
+const deleteReviewDeck = async(req,res,next) => {
+    const review = await Review.findByIdAndDelete(req.params.reviewID)
+    return res.status(200).json({success:true})
+}
+
 const getReviewDeck = async (req,res,next) => {
     const deckReviews = await Review.find({
         deckID: req.params.deckID
@@ -37,5 +52,7 @@ const getReviewDeck = async (req,res,next) => {
 
 module.exports = {
     reviewDeck,
-    getReviewDeck
+    getReviewDeck,
+    putReviewDeck,
+    deleteReviewDeck
 }

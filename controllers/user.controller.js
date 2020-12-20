@@ -6,6 +6,7 @@ const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
 const cloudinary = require('../middlewares/cloudinary')
 const nodemailer = require('nodemailer')
+const { compare, compareSync } = require('bcryptjs')
 
 const authFacebook = async (req, res, next) => {
     const token = encodedToken(req.user._id)
@@ -13,6 +14,24 @@ const authFacebook = async (req, res, next) => {
     res.setHeader('Authorization', token)
 
     return res.status(200).json({ success: true })
+}
+
+const addFriend = async (req,res,next) => {
+    const foundUser = await User.findOne({ _id : req.decoded._id })
+
+    const friend = await User.findById(req.params.userID)
+
+    if (foundUser.friend.indexOf(friend._id) > -1) {
+        foundUser.friend.pull(friend._id)
+        
+    } else {
+        foundUser.friend.push(friend._id)
+        
+    }
+
+    await foundUser.save()
+
+    return res.status(200).json({success:true})
 }
 
 const authGoogle = async (req, res, next) => {
@@ -256,7 +275,22 @@ const updateUser = async (req, res, next) => {
 
 }
 
+function getUnique(arr, comp) {
+
+    const unique = arr
+    .map(e => e[comp])
+   
+    // store the keys of the unique objects
+    .map((e, i, final) => final.indexOf(e) === i && i)
+   
+    // eliminate the dead keys & store unique objects
+    .filter(e => arr[e]).map(e => arr[e]);
+   
+    return unique;
+}
+
 module.exports = {
+    addFriend,
     index,
     newUser,
     getUser,

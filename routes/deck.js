@@ -6,11 +6,13 @@ const DeckController = require('../controllers/deck.controller')
 
 const verifyToken = require('../middlewares/verify-token')
 
+
 router.route('/')
     .get(DeckController.index)
     .post(verifyToken,upload.array('image',20),DeckController.newDeck)
 
 router.route('/:deckID')
+    .post(verifyToken,DeckController.likeDeck)
     .get(DeckController.getDeck)
     .put( DeckController.replaceDeck)
     .patch(verifyToken,upload.array('image',20), DeckController.updateDeck)

@@ -22,7 +22,11 @@ const DeckSchema = new Schema({
     },
     rating: {
         type: false
-    }
+    },
+    like: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
     
 })
 

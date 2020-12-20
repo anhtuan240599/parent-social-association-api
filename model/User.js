@@ -18,6 +18,9 @@ const UserSchema = new Schema({
     password: {
         type : String,
     },
+    friend:[{
+        type: Schema.Types.ObjectId
+    }],
     yearID:{
         type: Schema.Types.ObjectId,
         ref: "Year"

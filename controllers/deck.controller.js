@@ -37,6 +37,25 @@ const index = async (req, res, next) => {
 
 }
 
+const likeDeck = async (req,res,next) => {
+    const deck = await Deck.findById(req.params.deckID)
+
+    const foundUser = await User.findById({ _id : req.decoded._id })
+
+    if (deck.like.indexOf(foundUser._id) > -1) {
+        deck.like.pull(foundUser._id)
+        
+    } else {
+        deck.like.push(foundUser._id)
+        
+    }
+    deck.save()
+
+    return res.status(200).json({success:true})
+
+
+}
+
 const newDeck = async (req, res, next) => {
 
     const owner = await User.findOne({ _id: req.decoded._id })
@@ -141,5 +160,6 @@ module.exports = {
     getDeck,
     replaceDeck,
     updateDeck,
-    deleteDeck
+    deleteDeck,
+    likeDeck
 }

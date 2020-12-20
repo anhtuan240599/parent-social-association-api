@@ -11,5 +11,9 @@ router.route('/:deckID')
     .get(ReviewController.getReviewDeck)
     .post(verifyToken,upload.single('image',1),ReviewController.reviewDeck)
 
+router.route('/:deckID/:reviewID')
+    .put(verifyToken,ReviewController.putReviewDeck)
+    .post(verifyToken,ReviewController.deleteReviewDeck)
+
 
 module.exports = router
