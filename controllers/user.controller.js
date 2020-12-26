@@ -16,22 +16,26 @@ const authFacebook = async (req, res, next) => {
     return res.status(200).json({ success: true })
 }
 
-const addFriend = async (req,res,next) => {
+const followUser = async (req,res,next) => {
     const foundUser = await User.findOne({ _id : req.decoded._id })
 
     const friend = await User.findById(req.params.userID)
-
-    if (foundUser.friend.indexOf(friend._id) > -1) {
-        foundUser.friend.pull(friend._id)
+    
+    if (foundUser.following.indexOf(friend._id) > -1) {
+        foundUser.following.pull(friend._id)
+        friend.followers.pull(foundUser._id)
+        
         
     } else {
-        foundUser.friend.push(friend._id)
+        foundUser.following.push(friend._id)
+        friend.followers.push(foundUser._id)
         
     }
 
     await foundUser.save()
+    await friend.save()
 
-    return res.status(200).json({success:true})
+    return res.status(200).json({success:true })
 }
 
 const authGoogle = async (req, res, next) => {
@@ -290,7 +294,7 @@ function getUnique(arr, comp) {
 }
 
 module.exports = {
-    addFriend,
+    followUser,
     index,
     newUser,
     getUser,

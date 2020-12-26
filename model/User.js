@@ -18,7 +18,10 @@ const UserSchema = new Schema({
     password: {
         type : String,
     },
-    friend:[{
+    following:[{
+        type: Schema.Types.ObjectId
+    }],
+    followers:[{
         type: Schema.Types.ObjectId
     }],
     yearID:{

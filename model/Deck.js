@@ -14,9 +14,9 @@ const DeckSchema = new Schema({
         type: String,
         default: getDate(),
     },
-    image: {
+    image: [{
         type: Object
-    },
+    }],
     cloudinaryID: {
         type: Array
     },

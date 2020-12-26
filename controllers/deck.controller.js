@@ -7,14 +7,21 @@ const fullTextSearch = require('fulltextsearch');
 
 const fullTextSearchVi = fullTextSearch.vi;
 
+const getUserDeck = async (req,res,next) => {
+    const deck = await Deck.findOne({_owner : req.decoded._id})
+        .populate("owner")
+        .populate("reviews")
+        .exec()
 
+    return res.status(200).json({success:true, deck : deck })
+}
 const getDeck = async (req, res, next) => {
     const deck = await Deck.findById(req.params.deckID)
         .populate("owner")
         .populate("reviews")
         .exec()
 
-    return res.status(200).json({ deck })
+    return res.status(200).json({success:true, deck : deck })
 }
 
 const index = async (req, res, next) => {
@@ -102,7 +109,7 @@ const newDeck = async (req, res, next) => {
     owner.decks.push(newDeck._id)
     await owner.save()
 
-    return res.status(201).json({ deck: newDeck })
+    return res.status(201).json({ success:true, deck: newDeck })
 
 }
 const replaceDeck = async (req, res, next) => {
@@ -161,5 +168,6 @@ module.exports = {
     replaceDeck,
     updateDeck,
     deleteDeck,
-    likeDeck
+    likeDeck,
+    getUserDeck
 }

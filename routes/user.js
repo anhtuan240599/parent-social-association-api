@@ -38,7 +38,7 @@ router.route('/user')
     .patch(verifyToken,userController.updateUser)
 
 router.route('/:userID')
-    .post(verifyToken,userController.addFriend)
+    .post(verifyToken,userController.followUser)
     .get(userController.getUser)
     // .put(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userSchema),UserController.replaceUser)
     

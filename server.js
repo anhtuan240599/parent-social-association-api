@@ -28,7 +28,9 @@ const userRoute = require('./routes/user')
 const deckRoute = require('./routes/deck')
 const reviewRoute = require('./routes/review')
 const addressRoute = require('./routes/address')
+const messageRoute = require('./routes/message')
 // Middleware
+
 app.use(cors())
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -39,6 +41,8 @@ app.use('/api/auth',userRoute)
 app.use('/decks',deckRoute)
 app.use('/reviews',reviewRoute)
 app.use('/address',addressRoute)
+app.use('/message',messageRoute)
+
 
 //Catch error
 app.use((req,res,next) => {
@@ -60,20 +64,21 @@ app.use((err,req,res,next) =>  {
     })
 })
 
+
 //Socket 
+
+
 io.on("connection",(socket) => {
-    console.log("Co nguoi ket noi : " + socket.id );
 
     socket.on('Created', (data) => {
-        socket.emit('Created',data)
+        console.log('Co nguoi ket noi ' + data.user)
     })
 
-    socket.on('chat-message', (data) => {
+    socket.on('chat-message' , async  (data) => {
         socket.broadcast.emit('chat-message',data)
     })
 
     socket.on('typing' , (data) => {
-        
         socket.broadcast.emit('typing', data)
     })
     socket.on('stopTyping' , (data) => {
@@ -84,6 +89,7 @@ io.on("connection",(socket) => {
     })
     //  user comment 
     socket.on('user-comment', (data) => {
+        console.log(data.user)
         io.sockets.emit("user-comment",data )
      })
 })
