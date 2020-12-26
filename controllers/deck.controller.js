@@ -8,7 +8,7 @@ const fullTextSearch = require('fulltextsearch');
 const fullTextSearchVi = fullTextSearch.vi;
 
 const getUserDeck = async (req,res,next) => {
-    const deck = await Deck.findOne({_owner : req.decoded._id})
+    const deck = await Deck.find({ owner : req.decoded._id})
         .populate("owner")
         .populate("reviews")
         .exec()

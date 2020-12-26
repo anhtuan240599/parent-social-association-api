@@ -43,8 +43,8 @@ router.route('/:userID')
     // .put(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userSchema),UserController.replaceUser)
     
 
-router.route('/:userID/decks')
-    .get(userController.getUserDeck)
+router.route('/user/decks')
+    .get(verifyToken,userController.getUserDeck)
     .post(userController.newUserDeck)
 
 

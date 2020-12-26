@@ -89,8 +89,8 @@ const getUser = async (req, res, next) => {
 
 const getUserDeck = async (req, res, next) => {
 
-    const { userID } = req.value.params
-    const user = await User.findById(userID).populate('decks')
+    
+    const user = await User.findOne({_id:req.decoded._id}).populate('decks')
     return res.status(200).json({ decks: user.decks })
 
 }
