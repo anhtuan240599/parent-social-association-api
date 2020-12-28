@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
-const { string } = require('@hapi/joi')
+const { string, object } = require('@hapi/joi')
 const UserSchema = new Schema({
     fullName: {
         type: String
@@ -28,6 +28,10 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Year"
     },
+    deckShare: [{
+        type: Schema.Types.ObjectId,
+        ref:   "Deck"
+    }],
     role: {
         type:String
     },

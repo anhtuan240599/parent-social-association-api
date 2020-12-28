@@ -5,7 +5,7 @@ const YearSchema = new Schema({
     
     schoolYear: String,
 
-    users: { type: Schema.Types.ObjectId , ref : "User"}
+    users: [{ type: Schema.Types.ObjectId , ref : 'User'}]
 
 })
 

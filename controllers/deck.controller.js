@@ -25,11 +25,11 @@ const getDeck = async (req, res, next) => {
 }
 
 const index = async (req, res, next) => {
-    if (req.query.name) {
-        const regex = new RegExp(fullTextSearchVi(req.query.name), 'gi');
+    if (req.query.content) {
+        const regex = new RegExp(fullTextSearchVi(req.query.content), 'gi');
         const decks = await Deck.find({ name: regex })
             .populate("owner")
-            .populate("reviews")
+            .populate("reviews")``
             .exec()
 
         return res.status(200).json({ success: true, decks: decks })

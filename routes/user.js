@@ -28,7 +28,7 @@ router.route('/secret').get(passport.authenticate('jwt',{session : false}),userC
 router.route('/year')
     .get(userController.getYear)
     .post(userController.postYear)
-
+    
 router.route('/lostPassword')
     .post(userController.lostPassword)
 
@@ -41,11 +41,20 @@ router.route('/:userID')
     .post(verifyToken,userController.followUser)
     .get(userController.getUser)
     // .put(validateParam(schemas.idSchema,'userID'),validateBody(schemas.userSchema),UserController.replaceUser)
-    
+
+router.route('/user/follows')
+    .get(verifyToken,userController.getUserFollow)
+
+router.route('/user/:deckID')
+    .post(verifyToken,userController.shareDeck)
 
 router.route('/user/decks')
     .get(verifyToken,userController.getUserDeck)
     .post(userController.newUserDeck)
+
+router.route('/user/years')
+    .get(verifyToken,userController.getUserYear)
+
 
 
 module.exports = router

@@ -87,6 +87,18 @@ const getUser = async (req, res, next) => {
 
 }
 
+const getUserFollow = async (req,res,next) => {
+    const foundUser = await User.findOne({_id:req.decoded._id})
+    const users = await foundUser.following
+    return res.status(200).json({success:true,users:users})
+}
+
+const getUserYear = async (req,res,next) => {
+    const year = await Year.findOne({schoolYear : req.body.schoolYear})
+    .populate('users')
+    return res.status(200).json({users : year.users})
+}
+
 const getUserDeck = async (req, res, next) => {
 
     
@@ -170,7 +182,7 @@ const getYear = async (req, res, next) => {
 const replaceUser = async (req, res, next) => {
     const foundUser = await User.findOne({ _id: req.decoded._id })
     if (foundUser) {
-        const { name, email, fullName, role , password , password2 , gender , phone } = req.body
+        const { name, email, yearID , fullName, role , password , password2 , gender , phone } = req.body
         if (name) foundUser.name = name
         if (email) foundUser.email = email
         if (fullName) foundUser.fullName = fullName
@@ -188,6 +200,14 @@ const replaceUser = async (req, res, next) => {
         if (role) foundUser.role = role
         if (gender) foundUser.gender = gender
         if (phone) foundUser.phone = phone
+        if (yearID) {
+            const year = await Year.findOne({schoolYear : req.body.yearID})
+            console.log(year)
+            delete foundUser.yearID
+            foundUser.yearID = year._id
+            year.users.push(foundUser)
+            await year.save()
+        }
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path)
             foundUser.avatar = result.secure_url
@@ -197,7 +217,14 @@ const replaceUser = async (req, res, next) => {
     return res.status(200).json({ success: true })
 }
 
+const shareDeck = async (req,res,next) => {
+    const foundUser = await User.findOne({_id : req.decoded._id})
+    const deck = await Deck.findById(req.params.deckID)
+    foundUser.deckShare.push(deck._id)
+    foundUser.save()
+    return res.status(200).json({success:true})
 
+}
 const secret = async (req, res, next) => {
     return res.status(200).json({ success: true })
 }
@@ -300,15 +327,18 @@ module.exports = {
     getUser,
     replaceUser,
     updateUser,
+    getUserFollow,
     getUserDeck,
     newUserDeck,
     login,
     register,
     secret,
+    shareDeck,
     authGoogle,
     authFacebook,
     foundUser,
     postYear,
     getYear,
-    lostPassword
+    lostPassword,
+    getUserYear
 }
