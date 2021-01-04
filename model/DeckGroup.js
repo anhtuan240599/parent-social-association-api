@@ -1,17 +1,27 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
-const ReviewSchema = new Schema({
-    headline: String,
-    body: String,
-    rating: String,
-    image: String,
+const DeckGroupSchema = new Schema({
+    content: {type:String},
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     date: {
         type: String,
         default: getDate(),
     },
-    deckID: { type: Schema.Types.ObjectId, ref:"Deck" , ref:"DeckGroup"},
-    user: { type:Schema.Types.ObjectId, ref:"User"}
+    image: [{
+        type: Object
+    }],
+    cloudinaryID: {
+        type: Array
+    },
+    like: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
+    
 })
 
 function getDate() {
@@ -40,4 +50,6 @@ function getDate() {
     }
 }
 
-module.exports = mongoose.model("Review",ReviewSchema)
+const DeckGroup = mongoose.model('DeckGroup',DeckGroupSchema)
+
+module.exports = DeckGroup

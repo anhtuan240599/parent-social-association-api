@@ -1,10 +1,9 @@
 const User = require('../model/User')
 const Deck = require('../model/Deck')
-const Joi = require('@hapi/joi')
+const DeckGroup = require('../model/DeckGroup')
 const cloudinary = require('../middlewares/cloudinary')
-const upload = require('../middlewares/upload-photo')
 const fullTextSearch = require('fulltextsearch');
-
+const Year = require('../model/Year');
 const fullTextSearchVi = fullTextSearch.vi;
 
 const getUserDeck = async (req,res,next) => {
@@ -29,7 +28,7 @@ const index = async (req, res, next) => {
         const regex = new RegExp(fullTextSearchVi(req.query.content), 'gi');
         const decks = await Deck.find({ name: regex })
             .populate("owner")
-            .populate("reviews")``
+            .populate("reviews")
             .exec()
 
         return res.status(200).json({ success: true, decks: decks })
@@ -74,21 +73,6 @@ const newDeck = async (req, res, next) => {
     deck.owner = owner._id
     const newDeck = new Deck(deck)
 
-    // if(req.files)
-    // {
-    //     const urls = []
-    //     const ids = []
-    //     for (const file of req.files) {
-    //         const {path} = file
-    //         const result = await cloudinary.uploader.upload(path);
-    //         urls.push(result.secure_url)
-    //         ids.push(result.public_id)
-
-    //     }
-
-    //     newDeck.image = urls
-    //     newDeck.cloudinaryID = ids
-    // } 
     if (req.files) {
         const urls = []
         const ids = []
@@ -112,6 +96,9 @@ const newDeck = async (req, res, next) => {
     return res.status(201).json({ success:true, deck: newDeck })
 
 }
+
+
+
 const replaceDeck = async (req, res, next) => {
     
         const { deckID } = req.params

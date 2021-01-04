@@ -80,7 +80,9 @@ const getUser = async (req, res, next) => {
 
     const user = await User.findById(req.params.userID)
         .populate('decks')
+        .populate('deckShare')
         .populate('yearID')
+        .populate('decksGroup')
         .exec()
 
     return res.status(200).json({ user })

@@ -29,6 +29,8 @@ const deckRoute = require('./routes/deck')
 const reviewRoute = require('./routes/review')
 const addressRoute = require('./routes/address')
 const messageRoute = require('./routes/message')
+const groupRoute = require('./routes/group')
+const adminRoute = require('./routes/admin')
 // Middleware
 
 app.use(cors())
@@ -42,6 +44,8 @@ app.use('/decks',deckRoute)
 app.use('/reviews',reviewRoute)
 app.use('/address',addressRoute)
 app.use('/message',messageRoute)
+app.use('/groups',groupRoute)
+app.use('/admin',adminRoute)
 
 
 //Catch error

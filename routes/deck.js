@@ -5,7 +5,6 @@ const upload = require('../middlewares/upload-photo')
 const DeckController = require('../controllers/deck.controller')
 
 const verifyToken = require('../middlewares/verify-token')
-const { get } = require('mongoose')
 
 
 router.route('/')
@@ -21,6 +20,7 @@ router.route('/:deckID')
     .put( DeckController.replaceDeck)
     .patch(verifyToken,upload.array('image',20), DeckController.updateDeck)
     .delete(DeckController.deleteDeck)
+
 
 
 module.exports = router 

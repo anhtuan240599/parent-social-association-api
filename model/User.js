@@ -57,6 +57,10 @@ const UserSchema = new Schema({
         enum: ['local','google','facebook'],
         default: 'local'
     },
+    decksGroup: [{
+        type: Schema.Types.ObjectId,
+        ref : 'DeckGroup'
+    }],
     decks: [{
         type: Schema.Types.ObjectId,
         ref : 'Deck'
