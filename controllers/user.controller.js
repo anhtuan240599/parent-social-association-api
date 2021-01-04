@@ -60,8 +60,11 @@ const encodedToken = (userID) => {
 const foundUser = async (req, res, next) => {
 
     let foundUser = await User.findOne({ _id: req.decoded._id })
-        .populate("yearID")
-        .exec();
+        .populate('decks')
+        .populate('deckShare')
+        .populate('yearID')
+        .populate('decksGroup')
+        .exec()
     if (foundUser) {
         res.json({
             success: true,
