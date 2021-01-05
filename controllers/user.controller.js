@@ -24,18 +24,20 @@ const followUser = async (req,res,next) => {
     if (foundUser.following.indexOf(friend._id) > -1) {
         foundUser.following.pull(friend._id)
         friend.followers.pull(foundUser._id)
+        var message = "unfollow"
         
         
     } else {
         foundUser.following.push(friend._id)
         friend.followers.push(foundUser._id)
+        var message = "follow"
         
     }
 
     await foundUser.save()
     await friend.save()
 
-    return res.status(200).json({success:true })
+    return res.status(200).json({success:true , message: message })
 }
 
 const authGoogle = async (req, res, next) => {

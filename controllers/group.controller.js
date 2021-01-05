@@ -4,6 +4,7 @@ const cloudinary = require('../middlewares/cloudinary')
 const fullTextSearch = require('fulltextsearch');
 const Year = require('../model/Year');
 const { findById } = require('../model/User');
+const Group = require('../model/Group')
 const fullTextSearchVi = fullTextSearch.vi;
 
 const getDeckGroup = async (req,res,next) => {
@@ -49,8 +50,30 @@ const newDeckGroup = async (req, res, next) => {
     return res.status(201).json({ success:true, deck: newDeck })
 
 }
+const newGroup = async (req,res,next) => {
+    const admin = await User.findOne({_id: req.decoded._id})
+    const group = req.body
+    group.admin = admin._id
+    if (req.files) {
+        const urls = []
+        const ids = []
+        for (const File of req.files) {
+            const { path } = File
+            const result = await cloudinary.uploader.upload(path);
+            urls.push(result.secure_url)
+            ids.push(result.public_id)
+
+        }
+
+        newDeck.image = urls
+        newDeck.cloudinaryID = ids
+    }
+    await group.save()
+    return res.status(201).json({ success:true, group: group })
+}
 
 module.exports = {
     newDeckGroup,
-    getDeckGroup
+    getDeckGroup,
+    newGroup
 }

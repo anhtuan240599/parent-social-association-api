@@ -5,7 +5,7 @@ const JWT = require('jsonwebtoken')
 const axios = require('axios')
 
 const adminLogin = async (req,res,next) => {
-    const foundUser = await User.findOne({ name: "admin" })
+    const foundUser = await User.findOne({ email: "admin" })
     if (!foundUser) {
         res.status(403).json({ success: false })
     } else {
@@ -31,7 +31,7 @@ const deleteUser = async (req,res,next) => {
     let deleteUser = await User.remove({_id: req.params.userID})
     if(deleteUser)
     {
-        return res.status(200).json({success:true})
+        return res.status(200).json({success:true , message : "Da xoa user"})
     }
 }
 

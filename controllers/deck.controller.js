@@ -142,7 +142,7 @@ const deleteDeck = async (req, res, next) => {
     owner.decks.pull(deck)
     await owner.save()
 
-    return res.status(200).json({ success: true })
+    return res.status(200).json({ success: true , message: "xoa thanh cong"})
 }
 
 
