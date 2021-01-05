@@ -63,6 +63,7 @@ const newGroup = async (req,res,next) => {
     const admin = await User.findOne({_id: req.decoded._id})
     const group = req.body
     group.admin = admin._id
+    const newGroup = new Group(group)
     if (req.files) {
         const urls = []
         const ids = []
@@ -77,7 +78,7 @@ const newGroup = async (req,res,next) => {
         newDeck.image = urls
         newDeck.cloudinaryID = ids
     }
-    await group.save()
+    await newGroup.save()
     return res.status(201).json({ success:true, group: group })
 }
 
