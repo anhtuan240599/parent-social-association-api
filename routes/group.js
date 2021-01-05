@@ -10,7 +10,8 @@ const verifyToken = require('../middlewares/verify-token')
 router.route('/decks/:groupID')
     .post(verifyToken,upload.array('image',20),Group.newDeckGroup)
     .get(verifyToken,Group.getDeckGroup)
-
+router.route('/:groupID')
+    .post(verifyToken,Group.joinGroup)
 router.route('/')
     .post(verifyToken,upload.single('image',20),Group.newGroup)
 
