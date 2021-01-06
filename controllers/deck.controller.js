@@ -50,14 +50,14 @@ const likeDeck = async (req,res,next) => {
 
     if (deck.like.indexOf(foundUser._id) > -1) {
         deck.like.pull(foundUser._id)
-        
+        var message = "like"
     } else {
         deck.like.push(foundUser._id)
-        
+        var message = "unlike"
     }
     deck.save()
 
-    return res.status(200).json({success:true})
+    return res.status(200).json({success:true , message:message})
 
 
 }
