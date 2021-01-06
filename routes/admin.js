@@ -13,6 +13,9 @@ router.route('/:userID')
 router.route('/users')
     .get(verifyToken,adminController.getAll)
 
+router.route('/news')
+    .post(verifyToken,upload.array('image',20),adminController.postNews)
+
 router.route('/login')
     .post(verifyToken,adminController.adminLogin)
 

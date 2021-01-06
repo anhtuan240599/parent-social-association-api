@@ -1,5 +1,7 @@
 const Deck = require('../model/Deck')
 const User = require('../model/User')
+const News = require('../model/News')
+const cloudinary = require('../middlewares/cloudinary')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
 const axios = require('axios')
@@ -18,6 +20,26 @@ const adminLogin = async (req,res,next) => {
             res.status(403).json({ success: false })
         }
     }
+}
+const postNews = async (req,res,next) => {
+    const news = req.body
+    const newsPost = new News(news)
+    if (req.files) {
+        const urls = []
+        const ids = []
+        for (const File of req.files) {
+            const { path } = File
+            const result = await cloudinary.uploader.upload(path);
+            urls.push(result.secure_url)
+            ids.push(result.public_id)
+
+        }
+
+        newsPost.image = urls
+        newsPost.cloudinaryID = ids
+    }
+    await newsPost.save()
+    return res.status(200).json({ success:true, news : newsPost})
 }
 const getAll = async (req,res,next) => {
     const users = await User.find()
@@ -41,6 +63,7 @@ const deleteUser = async (req,res,next) => {
 module.exports = {
     deleteUser,
     adminLogin,
-    getAll
+    getAll,
+    postNews
 }
 

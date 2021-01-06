@@ -62,6 +62,8 @@ const encodedToken = (userID) => {
 const foundUser = async (req, res, next) => {
 
     let foundUser = await User.findOne({ _id: req.decoded._id })
+        .populate('following')
+        .populate('followers')
         .populate('decks')
         .populate('deckShare')
         .populate('yearID')
@@ -84,6 +86,8 @@ const getUser = async (req, res, next) => {
 
 
     const user = await User.findById(req.params.userID)
+        .populate('following')
+        .populate('followers')
         .populate('decks')
         .populate('deckShare')
         .populate('yearID')
