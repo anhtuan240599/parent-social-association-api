@@ -1,11 +1,25 @@
 const Deck = require('../model/Deck')
 const User = require('../model/User')
 const News = require('../model/News')
+const Event = require('../model/Event')
 const cloudinary = require('../middlewares/cloudinary')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
 const axios = require('axios')
+const Group = require('../model/Group')
 
+
+const searchUser = async (req,res,next) => {
+    if (req.query.name) {
+        const regex = new RegExp(fullTextSearchVi(req.query.name), 'gi');
+        const users = await User.find({ name: regex })  
+        return res.status(200).json({ success: true, users:users })
+    } else {
+        const users = await User.find()
+
+        return res.status(200).json({ success: true, users:users })
+    }
+}
 const adminLogin = async (req,res,next) => {
     const foundUser = await User.findOne({ email: "admin" })
     if (!foundUser) {
@@ -20,6 +34,11 @@ const adminLogin = async (req,res,next) => {
             res.status(403).json({ success: false })
         }
     }
+}
+
+const getNews = async (req,res,next) => {
+    const news = await News.find()
+    return res.status(200).json({success:true, news:news})
 }
 const postNews = async (req,res,next) => {
     const news = req.body
@@ -40,6 +59,31 @@ const postNews = async (req,res,next) => {
     }
     await newsPost.save()
     return res.status(200).json({ success:true, news : newsPost})
+}
+const getEvents  = async (req,res,next) => {
+    const events = await Event.find()
+
+    return res.status(200).json({success:true , events:events})
+}
+const postEvent = async (req,res,next) => {
+    const event = req.body
+    const newEvent = new Event(event)
+    if (req.files) {
+        const urls = []
+        const ids = []
+        for (const File of req.files) {
+            const { path } = File
+            const result = await cloudinary.uploader.upload(path);
+            urls.push(result.secure_url)
+            ids.push(result.public_id)
+
+        }
+
+        newEvent.image = urls
+        newEvent.cloudinaryID = ids
+    }
+    await newEvent.save()
+    return res.status(200).json({ success:true, event : newEvent})
 }
 const getAll = async (req,res,next) => {
     const users = await User.find()
@@ -64,6 +108,11 @@ module.exports = {
     deleteUser,
     adminLogin,
     getAll,
-    postNews
+    getNews,
+    getEvents,
+    postNews,
+    postEvent,
+    searchUser
+    
 }
 

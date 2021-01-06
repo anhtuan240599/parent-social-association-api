@@ -83,8 +83,6 @@ const idSchema = Joi.object().keys({
 })
 
 const getUser = async (req, res, next) => {
-
-
     const user = await User.findById(req.params.userID)
         .populate('following')
         .populate('followers')

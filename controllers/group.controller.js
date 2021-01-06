@@ -6,6 +6,13 @@ const { findById } = require('../model/User');
 const Group = require('../model/Group')
 const fullTextSearchVi = fullTextSearch.vi;
 
+
+const getGroup = async (req,res,next) => {
+    const groups = await Group.find()
+    .populate('admin')
+    .exec()
+    return res.status(200).json({success:true,groups:groups})
+}
 const getDeckGroup = async (req,res,next) => {
     const group = await Group.findById(req.params.groupID) 
         .populate("decks")
@@ -86,5 +93,6 @@ module.exports = {
     newDeckGroup,
     getDeckGroup,
     newGroup,
-    joinGroup
+    joinGroup,
+    getGroup
 }

@@ -1,11 +1,12 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const NewsSchema = new Schema({
+const EventsSchema = new Schema({
     
-    category : String ,
     title : String,
     description : String,
+    start: String,
+    end:String,
     image : [{
         type: Object
     }],
@@ -18,7 +19,6 @@ const NewsSchema = new Schema({
     },
 
 })
-
 function getDate() {
     var d = new Date();
     var fullTime = `${getFormatTime()}  ${getFormatDate()} `;
@@ -45,6 +45,6 @@ function getDate() {
     }
 }
 
-const News = mongoose.model('News',NewsSchema)
+const Events = mongoose.model('Events',EventsSchema)
 
-module.exports = News
+module.exports = Events

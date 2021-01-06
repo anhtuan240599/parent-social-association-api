@@ -13,6 +13,7 @@ router.route('/decks/:groupID')
 router.route('/:groupID')
     .post(verifyToken,Group.joinGroup)
 router.route('/')
+    .get(verifyToken,Group.getGroup)
     .post(verifyToken,upload.single('image',20),Group.newGroup)
 
 module.exports = router 

@@ -76,7 +76,7 @@ app.use((err,req,res,next) =>  {
 io.on("connection",(socket) => {
 
     socket.on('Created', (data) => {
-        console.log('Co nguoi ket noi ' + data.user)
+        console.log('Co nguoi ket noi ')
     })
 
     socket.on('chat-message' , async  (data) => {
