@@ -50,10 +50,29 @@ const likeDeck = async (req,res,next) => {
 
     if (deck.like.indexOf(foundUser._id) > -1) {
         deck.like.pull(foundUser._id)
-        var message = "like"
+        var message = "unlike"
     } else {
         deck.like.push(foundUser._id)
+        var message = "like"
+    }
+    deck.save()
+
+    return res.status(200).json({success:true , message:message})
+
+
+}
+
+const likeDeckGroup = async (req,res,next) => {
+    const deck = await DeckGroup.findById(req.params.deckID)
+
+    const foundUser = await User.findById({ _id : req.decoded._id })
+
+    if (deck.like.indexOf(foundUser._id) > -1) {
+        deck.like.pull(foundUser._id)
         var message = "unlike"
+    } else {
+        deck.like.push(foundUser._id)
+        var message = "like"
     }
     deck.save()
 
@@ -156,5 +175,6 @@ module.exports = {
     updateDeck,
     deleteDeck,
     likeDeck,
+    likeDeckGroup,
     getUserDeck
 }

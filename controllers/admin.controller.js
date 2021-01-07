@@ -2,11 +2,13 @@ const Deck = require('../model/Deck')
 const User = require('../model/User')
 const News = require('../model/News')
 const Event = require('../model/Event')
+const Review = require('../model/Review')
 const cloudinary = require('../middlewares/cloudinary')
 const { JWT_SECRET } = require('../config/index')
 const JWT = require('jsonwebtoken')
 const axios = require('axios')
 const Group = require('../model/Group')
+const DeckGroup = require('../model/DeckGroup')
 
 
 const searchUser = async (req,res,next) => {
@@ -95,6 +97,9 @@ const getAll = async (req,res,next) => {
 }
 const deleteUser = async (req,res,next) => {
     let deleteUser = await User.remove({_id: req.params.userID})
+    await Deck.remove({ owner : req.params.userID })
+    await DeckGroup.remove({ owner : req.params.userID })
+    await Review.remove({user : req.params.userID })
     if(deleteUser)
     {
         return res.status(200).json({success:true , message : "Da xoa user"})

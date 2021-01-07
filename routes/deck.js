@@ -13,7 +13,8 @@ router.route('/')
 
 router.route('/user')
     .get(verifyToken,DeckController.getUserDeck)
-
+router.route('/group/:deckID')
+    .post(verifyToken,DeckController.likeDeckGroup)
 router.route('/:deckID')
     .post(verifyToken,DeckController.likeDeck)
     .get(DeckController.getDeck)

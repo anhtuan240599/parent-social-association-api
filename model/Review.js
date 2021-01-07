@@ -11,6 +11,7 @@ const ReviewSchema = new Schema({
         default: getDate(),
     },
     deckID: { type: Schema.Types.ObjectId, ref:"Deck" , ref:"DeckGroup"},
+    deckGroupID: { type: Schema.Types.ObjectId, ref:"DeckGroup"},
     user: { type:Schema.Types.ObjectId, ref:"User"}
 })
 
