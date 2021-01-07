@@ -96,11 +96,11 @@ const getAll = async (req,res,next) => {
     return res.status(200).json({success:true , users : users , decks: decks})
 }
 const deleteUser = async (req,res,next) => {
-    const foundUser = await User.findById(req.params.userID)
-    const deck = await Deck.find()
-    if (deck.like.indexOf(foundUser._id) > -1) {
-        deck.like.pull(foundUser._id)
-    }
+    // const foundUser = await User.findById(req.params.userID)
+    // const deck = await Deck.find()
+    // if (deck.like.indexOf(foundUser._id) > -1) {
+    //     deck.like.pull(foundUser._id)
+    // }
     let deleteUser = await User.remove({_id: req.params.userID})
     await Deck.remove({ owner : req.params.userID })
     await DeckGroup.remove({ owner : req.params.userID })
