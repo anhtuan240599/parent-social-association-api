@@ -12,6 +12,8 @@ router.route('/decks/:groupID')
     .get(verifyToken,Group.getDeckGroup)
 router.route('/:groupID')
     .post(verifyToken,Group.joinGroup)
+    .get(verifyToken,Group.getOneGroup)
+
 router.route('/')
     .get(verifyToken,Group.getGroup)
     .post(verifyToken,upload.single('image',20),Group.newGroup)

@@ -13,6 +13,13 @@ const getGroup = async (req,res,next) => {
     .exec()
     return res.status(200).json({success:true,groups:groups})
 }
+
+const getOneGroup = async (req,res,next) => {
+    const groups = await Group.findById(req.params.groupID)
+    .populate('users')
+    .populate('decks')
+    return res.status(200).json({success:true,groups:groups})
+}
 const getDeckGroup = async (req,res,next) => {
     const group = await Group.findById(req.params.groupID) 
         .populate("decks")
@@ -89,9 +96,11 @@ const newGroup = async (req,res,next) => {
     return res.status(201).json({ success:true, group: group })
 }
 
+
 module.exports = {
     newDeckGroup,
     getDeckGroup,
+    getOneGroup,
     newGroup,
     joinGroup,
     getGroup
