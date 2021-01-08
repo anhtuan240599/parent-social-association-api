@@ -16,11 +16,12 @@ router.route('/deck/:deckID')
 
 router.route('/:groupID/:deckID')
     .delete(verifyToken,Group.deleteDeckGroup)
-    
+
 router.route('/:groupID')
     .post(verifyToken,Group.joinGroup)
     .get(verifyToken,Group.getOneGroup)
     .put(verifyToken,upload.single('image',1),Group.updateGroup)
+    .delete(verifyToken,Group.deleteGroup)
 
 router.route('/')
     .get(verifyToken,Group.getGroup)

@@ -19,6 +19,16 @@ const deleteDeckGroup = async(req,res,next)  =>  {
     await foundUser.save()
     return res.status(200).json({success :  true,message: "xoa bai viet thanh cong"})
 }
+const deleteGroup = async(req,res,next) => {
+    const group = await Group.remove({_id : req.params.groupID })
+    const foundUser =  await User.findOne({groups : req.params.groupID })
+    if (group)
+    {
+        foundUser.Group.pull(req.params.groupID)
+    }
+    await foundUser.save()
+    return res.status(200).json({success :  true,message: "xoa group thanh cong"})
+}
 const getGroup = async (req,res,next) => {
     const groups = await Group.find()
     .populate('admin')
@@ -147,5 +157,6 @@ module.exports = {
     joinGroup,
     getGroup,
     updateGroup,
-    deleteDeckGroup
+    deleteDeckGroup,
+    deleteGroup
 }
