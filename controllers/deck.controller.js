@@ -90,6 +90,7 @@ const newDeck = async (req, res, next) => {
     delete deck.owner
 
     deck.owner = owner._id
+
     const newDeck = new Deck(deck)
 
     if (req.files) {

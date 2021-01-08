@@ -5,10 +5,11 @@ const GroupSchema = new Schema({
     
     name :String,
     description:String,
+    image : String,
     admin : {type:Schema.Types.ObjectId, ref:'User'},
     users: [{ type: Schema.Types.ObjectId , ref : 'User'}],
 
-    decks: [{ type: Schema.Types.ObjectId , ref : 'DeckGroup'}]
+    decks: [{ type: Schema.Types.ObjectId , ref : 'DeckGroup'}],
 
 })
 

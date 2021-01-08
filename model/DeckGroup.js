@@ -7,6 +7,12 @@ const DeckGroupSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    avatar : {
+        type : String,
+    },
+    name : {
+        type : String,
+    },
     date: {
         type: String,
         default: getDate(),

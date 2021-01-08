@@ -67,6 +67,7 @@ const foundUser = async (req, res, next) => {
         .populate('decks')
         .populate('deckShare')
         .populate('yearID')
+        .populate('groups')
         .populate('decksGroup')
         .exec()
     if (foundUser) {
@@ -89,6 +90,7 @@ const getUser = async (req, res, next) => {
         .populate('decks')
         .populate('deckShare')
         .populate('yearID')
+        .populate('groups')
         .populate('decksGroup')
         .exec()
 
