@@ -47,7 +47,6 @@ const getOneDeckGroup = async (req, res, next) => {
     const deck = await DeckGroup.findById(req.params.deckID)
         .populate("owner")
         .populate("reviews")
-        .populate("like")
         .exec()
 
     return res.status(200).json({success:true, deck : deck })
