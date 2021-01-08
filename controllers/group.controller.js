@@ -6,7 +6,19 @@ const { findById } = require('../model/User');
 const Group = require('../model/Group')
 const fullTextSearchVi = fullTextSearch.vi;
 
-
+const deleteDeckGroup = async(req,res,next)  =>  {
+    const deck = await DeckGroup.remove({_id : req.params.deckID})
+    const group =  await Group.findById(req.params.groupID)
+    const foundUser =  await User.findOne({decksGroup : req.params.deckID })
+    if (deck)
+    {
+        foundUser.decksGroup.pull(req.params.deckID)
+        group.decks.pull(req.params.deckID)
+    }
+    await group.save()
+    await foundUser.save()
+    return res.status(200).json({success :  true,message: "xoa bai viet thanh cong"})
+}
 const getGroup = async (req,res,next) => {
     const groups = await Group.find()
     .populate('admin')
@@ -20,6 +32,15 @@ const getOneGroup = async (req,res,next) => {
     .populate('decks')
     .populate('admin')
     return res.status(200).json({success:true,groups:groups})
+}
+const getOneDeckGroup = async (req, res, next) => {
+    const deck = await DeckGroup.findById(req.params.deckID)
+        .populate("owner")
+        .populate("reviews")
+        .populate("like")
+        .exec()
+
+    return res.status(200).json({success:true, deck : deck })
 }
 const getDeckGroup = async (req,res,next) => {
     const group = await Group.findById(req.params.groupID) 
@@ -41,6 +62,7 @@ const newDeckGroup = async (req, res, next) => {
     deck.owner = owner._id
     deck.avatar = owner.avatar
     deck.name = owner.name
+    deck.fullName = owner.fullName
     const newDeck = new DeckGroup(deck)
 
     if (req.files) {
@@ -120,8 +142,10 @@ module.exports = {
     newDeckGroup,
     getDeckGroup,
     getOneGroup,
+    getOneDeckGroup,
     newGroup,
     joinGroup,
     getGroup,
-    updateGroup
+    updateGroup,
+    deleteDeckGroup
 }
