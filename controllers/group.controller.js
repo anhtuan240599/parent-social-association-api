@@ -24,7 +24,7 @@ const deleteGroup = async(req,res,next) => {
     const foundUser =  await User.findOne({groups : req.params.groupID })
     if (group)
     {
-        foundUser.Group.pull(req.params.groupID)
+        foundUser.groups.pull(req.params.groupID)
     }
     await foundUser.save()
     return res.status(200).json({success :  true,message: "xoa group thanh cong"})
