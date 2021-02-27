@@ -26,7 +26,9 @@ const DeckSchema = new Schema({
     like: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    isCompleted : { type: false }
+    
     
 })
 

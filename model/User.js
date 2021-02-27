@@ -65,6 +65,10 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Group',
     }],
+    rooms: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Room',
+    }],
     decks: [{
         type: Schema.Types.ObjectId,
         ref : 'Deck'

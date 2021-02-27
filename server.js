@@ -8,9 +8,25 @@ const app = express()
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
 const cors = require('cors')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 
+// swagger
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi:'3.0.0',
+        info: {
+            title: "Customer API",
+            description: "Customer API information",
+            version:'1.0.0'
+        }
+    },
+    apis: ['./routes/swagger.js']
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 //import config
 const db = require('./config/key').MongoURI
@@ -31,6 +47,8 @@ const addressRoute = require('./routes/address')
 const messageRoute = require('./routes/message')
 const groupRoute = require('./routes/group')
 const adminRoute = require('./routes/admin')
+const roomRoute = require('./routes/room')
+
 // Middleware
 
 app.use(cors())
@@ -46,6 +64,8 @@ app.use('/address',addressRoute)
 app.use('/message',messageRoute)
 app.use('/groups',groupRoute)
 app.use('/admin',adminRoute)
+app.use('/rooms',roomRoute)
+app.use("/api-docs",swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 
 //Catch error
@@ -74,9 +94,14 @@ app.use((err,req,res,next) =>  {
 
 
 io.on("connection",(socket) => {
-
+    console.log(socket.adapter.rooms)
     socket.on('Created', (data) => {
-        console.log('Co nguoi ket noi ')
+        console.log('Co nguoi ket noi ', data.user)
+        
+    })
+    socket.on('user_connected', function (username) {
+        users[username] = socket.id;
+        io.emit("user_connected",username)
     })
 
     socket.on('chat-message' , async  (data) => {

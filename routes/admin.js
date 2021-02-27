@@ -7,6 +7,13 @@ const adminController = require('../controllers/admin.controller')
 const verifyToken = require('../middlewares/verify-token')
 
 
+router.route('/report')
+    .post(upload.single('image',1),adminController.reportUser)
+    .get(verifyToken,adminController.getReport)
+
+router.route('/reply')
+    .post(verifyToken,adminController.reply)
+
 router.route('/:userID')
     .delete(verifyToken,adminController.deleteUser)
 

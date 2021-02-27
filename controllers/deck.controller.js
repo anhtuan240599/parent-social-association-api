@@ -7,12 +7,14 @@ const Year = require('../model/Year');
 const fullTextSearchVi = fullTextSearch.vi;
 
 const getUserDeck = async (req,res,next) => {
-    const deck = await Deck.find({ owner : req.decoded._id})
-        .populate("owner")
+    const deck = await Deck.find({ owner : req.decoded._id })
+        .populate("owner",)
         .populate("reviews")
         .exec()
+    
+        return res.status(200).json({success:true, deck : deck })
 
-    return res.status(200).json({success:true, deck : deck })
+   
 }
 const getDeck = async (req, res, next) => {
     const deck = await Deck.findById(req.params.deckID)

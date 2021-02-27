@@ -8,7 +8,6 @@ const MessageSchema = new Schema({
         ref : "User"
     },
     message: String,
-    abc: String,
     from :  {
         type: mongoose.Schema.Types.ObjectId,
         ref : "User"
@@ -16,6 +15,10 @@ const MessageSchema = new Schema({
     time : {
         type: String,
         default : getDate(),
+    },
+    roomID : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : "Room"
     }
 })
 function getDate() {
