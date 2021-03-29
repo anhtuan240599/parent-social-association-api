@@ -15,7 +15,6 @@ const sendMessage = async (req, res, next) => {
 
     const save = await mess.save()
     if (save) {
-        console.log(mess)
         res.status(200).json({success: true})
     }
    

@@ -13,6 +13,12 @@ const swaggerUi = require('swagger-ui-express')
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 
+app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+ });
+
 // swagger
 const swaggerOptions = {
     swaggerDefinition: {
@@ -48,6 +54,8 @@ const messageRoute = require('./routes/message')
 const groupRoute = require('./routes/group')
 const adminRoute = require('./routes/admin')
 const roomRoute = require('./routes/room')
+const { type } = require('os')
+const { getMaxListeners } = require('./model/User')
 
 // Middleware
 
@@ -94,7 +102,6 @@ app.use((err,req,res,next) =>  {
 
 
 io.on("connection",(socket) => {
-    console.log(socket.adapter.rooms)
     socket.on('Created', (data) => {
         console.log('Co nguoi ket noi ', data.user)
         
@@ -103,9 +110,9 @@ io.on("connection",(socket) => {
         users[username] = socket.id;
         io.emit("user_connected",username)
     })
-
+    // send message to room
     socket.on('chat-message' , async  (data) => {
-        socket.broadcast.emit('chat-message',data)
+        socket.to(socket.Room).to(socket.Room2).emit('chat-message',data)
     })
 
     socket.on('typing' , (data) => {
@@ -114,21 +121,24 @@ io.on("connection",(socket) => {
     socket.on('stopTyping' , (data) => {
         socket.broadcast.emit('stopTyping',data)
     })
-    socket.on('joined',(data) => {
+    // create a room went user want to chat with another user
+    socket.on('joined',async (data) => {
+        socket.join(data.friend)
+        socket.join(data.user)
+        socket.Room = (data.friend)
+        socket.Room2 = (data.user)
+        console.log(socket.adapter.rooms)
         socket.broadcast.emit('joined',data)
     })
     //  user comment 
     socket.on('user-comment', (data) => {
-        console.log(data.user)
         io.sockets.emit("user-comment",data )
      })
 })
 
-app.all('/', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
- });
+
+
+
 
 //start server
 const port = app.get('port') || 3000

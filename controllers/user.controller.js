@@ -249,6 +249,7 @@ const secret = async (req, res, next) => {
 // }
 
 const login = async (req, res, next) => {
+    try{
     const foundUser = await User.findOne({ name: req.body.name })
     if (!foundUser) {
         res.status(403).json({ success: false })
@@ -261,6 +262,9 @@ const login = async (req, res, next) => {
         } else {
             res.status(403).json({ success: false })
         }
+    }
+    } catch(err){
+
     }
 }
 
