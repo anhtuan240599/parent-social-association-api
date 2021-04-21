@@ -1,4 +1,4 @@
-const { number } = require('@hapi/joi')
+const { number, object } = require('@hapi/joi')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -16,6 +16,9 @@ const MessageSchema = new Schema({
         type: String,
         default : getDate(),
     },
+    image: [{
+        type: Object,
+    }],
     roomID : {
         type: mongoose.Schema.Types.ObjectId,
         ref : "Room"

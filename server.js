@@ -5,20 +5,19 @@ const express = require('express')
 const logger = require('morgan')
 const mongoose = require('mongoose')
 const app = express()
+const cors = require('cors');
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
-const cors = require('cors')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 
-app.all('/', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:8888"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
- });
-
+});
 // swagger
 const swaggerOptions = {
     swaggerDefinition: {
@@ -56,9 +55,10 @@ const adminRoute = require('./routes/admin')
 const roomRoute = require('./routes/room')
 const { type } = require('os')
 const { getMaxListeners } = require('./model/User')
+const { rejects } = require('assert')
+
 
 // Middleware
-
 app.use(cors())
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -137,7 +137,12 @@ io.on("connection",(socket) => {
 })
 
 
-
+const promise = new Promise ((resolve,rejects) => {
+    resolve('Done')
+});
+promise.then((result) => {
+    console.log(result)
+})
 
 
 //start server

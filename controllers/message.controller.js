@@ -8,7 +8,7 @@ const sendMessage = async (req, res, next) => {
     mess.message = message
     if (req.file) {
         const result = await cloudinary.uploader.upload(req.file.path)
-        review.image = result.secure_url
+        mess.image = result.secure_url
     }
     mess.from = req.decoded._id
     mess.to = req.params.userID
