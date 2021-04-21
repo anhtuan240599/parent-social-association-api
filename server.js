@@ -138,5 +138,5 @@ io.on("connection",(socket) => {
 
 
 //start server
-const port = app.get('port') || 3000
-server.listen(process.env.PORT || 3000, () => console.log(`Server listening on port ${port}`))
+const PORT = process.env.PORT || 3000;
+app.listen(process.env.PORT || 3000 , console.log(`server run on port ${PORT}`));
