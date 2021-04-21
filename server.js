@@ -137,14 +137,6 @@ io.on("connection",(socket) => {
 })
 
 
-const promise = new Promise ((resolve,rejects) => {
-    resolve('Done')
-});
-promise.then((result) => {
-    console.log(result)
-})
-
-
 //start server
 const port = app.get('port') || 3000
-server.listen(port, () => console.log(`Server listening on port ${port}`))
+server.listen(process.env.PORT || 3000, () => console.log(`Server listening on port ${port}`))
