@@ -139,4 +139,4 @@ io.on("connection",(socket) => {
 
 //start server
 const PORT = process.env.PORT || 3000;
-app.listen(process.env.PORT || 3000 , console.log(`server run on port ${PORT}`));
+server.listen(process.env.PORT || 3000 , console.log(`server run on port ${PORT}`));
