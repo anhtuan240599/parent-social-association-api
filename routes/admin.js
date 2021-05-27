@@ -1,6 +1,7 @@
 const express = require('express')
 const router = require('express-promise-router')()
 const upload = require('../middlewares/upload-photo')
+const uploadFileMW = require('../middlewares/upload-file')
 
 const adminController = require('../controllers/admin.controller')
 
@@ -31,5 +32,8 @@ router.route('/event')
 
 router.route('/login')
     .post(verifyToken,adminController.adminLogin)
+
+router.route('/addUsers')
+    .post(verifyToken,uploadFileMW().single('file'),adminController.addListUser)
 
 module.exports = router 
