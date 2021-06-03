@@ -93,9 +93,7 @@ const getUser = async (req, res, next) => {
         .populate('groups')
         .populate('decksGroup')
         .exec()
-
     return res.status(200).json({ user })
-
 }
 
 const getUserFollow = async (req,res,next) => {
@@ -146,8 +144,6 @@ const lostPassword = async (req, res, next) => {
         foundUser.save()
         return res.status(200).json({success:true , message: "Mat khau da duoc gui den email cua ban"})
     }
-    
-
 }
 
 const newUser = async (req, res, next) => {
@@ -250,7 +246,7 @@ const secret = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     try{
-    const foundUser = await User.findOne({ name: req.body.name })
+    const foundUser = await User.findOne({ studentID: req.body.studentID })
     if (!foundUser) {
         res.status(403).json({ success: false })
     } else {

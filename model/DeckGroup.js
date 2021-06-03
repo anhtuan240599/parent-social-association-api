@@ -5,7 +5,7 @@ const DeckGroupSchema = new Schema({
     content: {type:String},
     owner: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User' || 'Teacher'
     },
     avatar : {
         type : String,

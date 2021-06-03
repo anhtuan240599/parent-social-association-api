@@ -23,9 +23,13 @@ const addListUser = async (req, res, next) => {
       .on("data", function (data) {
         csvData.push({
           id: data[0],
-          name: data[1],
-          description: data[2],
-          createdAt: data[3],
+          studentID: data[1],
+          userName: data[2],
+          email: data[3],
+          phone: data[4],
+          class: data[5],
+          nameChild: data[6],
+          dataOfBirth: data [7]
         });
       })
       .on("end", function () {
