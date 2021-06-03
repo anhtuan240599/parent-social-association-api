@@ -31,7 +31,7 @@ router.route('/event')
     .get(verifyToken,adminController.getEvents)
 
 router.route('/login')
-    .post(verifyToken,adminController.adminLogin)
+    .post(adminController.adminLogin)
 
 router.route('/addUsers')
     .post(verifyToken,uploadFileMW().single('file'),adminController.addListUser)
