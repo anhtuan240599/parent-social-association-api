@@ -5,36 +5,83 @@ const Event = require("../model/Event");
 const Report = require("../model/Report");
 const Review = require("../model/Review");
 const cloudinary = require("../middlewares/cloudinary");
-const { JWT_SECRET } = require("../config/index");
 const JWT = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const axios = require("axios");
 const Group = require("../model/Group");
 const DeckGroup = require("../model/DeckGroup");
 const fastcsv = require("fast-csv");
+const bcrypt = require("bcryptjs");
 const fs = require("fs");
 
-const addListUser = async (req, res, next) => {
-  setTimeout(function () {
+const addListTeacher = async (req, res, next) => {
+  setTimeout(async function () {
     let stream = fs.createReadStream(`./upload/${req.file.filename}`);
     let csvData = [];
     let csvStream = fastcsv
       .parse()
-      .on("data", function (data) {
+      .on("data", async function (data) {
         csvData.push({
           id: data[0],
-          studentID: data[1],
+          userID: data[1],
           userName: data[2],
           email: data[3],
-          phone: data[4],
-          class: data[5],
-          nameChild: data[6],
-          dataOfBirth: data [7]
+          password: data[4],
+          phone: data[5],
+          tag: data[6],
+          dateOfBirth: data[7],
+          formTeacher: data[8],
+          dean: data[9],
+          role: data[10],
         });
       })
-      .on("end", function () {
+      .on("end", async function () {
+        // remove the first line: header
+        await csvData.shift();
+        const salt = await bcrypt.genSalt(10);
+        for (let user of csvData) {
+          const hashPassword = await bcrypt.hash(user.password, salt);
+          user.password = hashPassword;
+        }
+        User.insertMany(csvData)
+          .then(function () {
+            return res.status(200).json(csvData); // Success
+          })
+          .catch(function (error) {
+            console.log(error); // Failure
+          });
+      });
+    stream.pipe(csvStream);
+  }, 1000);
+};
+
+const addListUser = async (req, res, next) => {
+  setTimeout(async function () {
+    let stream = fs.createReadStream(`./upload/${req.file.filename}`);
+    let csvData = [];
+    let csvStream = fastcsv
+      .parse()
+      .on("data", async function (data) {
+        await csvData.push({
+          id: data[0],
+          userID: data[1],
+          userName: data[2],
+          email: data[3],
+          password: data[4],
+          phone: data[5],
+          class: data[6],
+          nameChild: data[7],
+          dateOfBirth: data[8],
+          role: data[9],
+        });
+      })
+      .on("end", async function () {
         // remove the first line: header
         csvData.shift();
+        const salt = await bcrypt.genSalt(10);
+        for (let user of csvData) {
+          const hashPassword = await bcrypt.hash(user.password, salt);
+          user.password = hashPassword;
+        }
 
         User.insertMany(csvData)
           .then(function () {
@@ -49,9 +96,9 @@ const addListUser = async (req, res, next) => {
 };
 
 const searchUser = async (req, res, next) => {
-  if (req.query.name) {
-    const regex = new RegExp(fullTextSearchVi(req.query.name), "gi");
-    const users = await User.find({ name: regex });
+  if (req.query.userID) {
+    const regex = new RegExp(fullTextSearchVi(req.query.userID), "gi");
+    const users = await User.find({ userID: regex });
     return res.status(200).json({ success: true, users: users });
   } else {
     const users = await User.find();
@@ -177,6 +224,7 @@ const reply = async (req, res, next) => {
 };
 
 module.exports = {
+  addListTeacher,
   addListUser,
   deleteUser,
   adminLogin,

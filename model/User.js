@@ -6,7 +6,7 @@ const UserSchema = new Schema({
     userName: {
         type: String
     },
-    studentID: {
+    userID: {
         type: String,
     },
     class: {
@@ -16,7 +16,7 @@ const UserSchema = new Schema({
         type: String
     },
     dateOfBirth: {
-        type: Date
+        type: String
     },
     avatar:{
         type: String,
@@ -26,6 +26,15 @@ const UserSchema = new Schema({
     },
     password: {
         type : String,
+    },
+    tag: {
+        type: String
+    },
+    formTeacher: {
+        type: String
+    },
+    dean: {
+        type: String
     },
     following:[{
         type: Schema.Types.ObjectId
@@ -85,7 +94,8 @@ const UserSchema = new Schema({
     address: { type: Schema.Types.ObjectId, ref:"Address" },
     createdAt: {
         type: Date
-    }
+    },
+
     
 })
 
@@ -118,8 +128,8 @@ UserSchema.pre('save', async function (next) {
         this.password = passwordHashed
 
         next()
-    } catch (error) {
-        next(error)
+    } catch (err) {
+        return next(err)
     }
     
 })

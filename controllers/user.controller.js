@@ -186,44 +186,6 @@ const getYear = async (req, res, next) => {
     return res.status(200).json({ success: true, foundYear })
 }
 
-const replaceUser = async (req, res, next) => {
-    const foundUser = await User.findOne({ _id: req.decoded._id })
-    if (foundUser) {
-        const { name, email, yearID , fullName, role , password , password2 , gender , phone } = req.body
-        if (name) foundUser.name = name
-        if (email) foundUser.email = email
-        if (fullName) foundUser.fullName = fullName
-        if (password)
-        {
-           
-            if (!foundUser.comparePassword(password))
-            {    
-                return res.status(400).json({message: "sai mat khau cu" ,})
-            }
-            else {
-                foundUser.password = password2
-            }
-        }
-        if (role) foundUser.role = role
-        if (gender) foundUser.gender = gender
-        if (phone) foundUser.phone = phone
-        if (yearID) {
-            const year = await Year.findOne({schoolYear : req.body.yearID})
-            console.log(year)
-            delete foundUser.yearID
-            foundUser.yearID = year._id
-            year.users.push(foundUser)
-            await year.save()
-        }
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path)
-            foundUser.avatar = result.secure_url
-        }
-        await foundUser.save();
-    }
-    return res.status(200).json({ success: true })
-}
-
 const shareDeck = async (req,res,next) => {
     const foundUser = await User.findOne({_id : req.decoded._id})
     const deck = await Deck.findById(req.params.deckID)
@@ -246,7 +208,7 @@ const secret = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     try{
-    const foundUser = await User.findOne({ studentID: req.body.studentID })
+    const foundUser = await User.findOne({ userID: req.body.userID })
     if (!foundUser) {
         res.status(403).json({ success: false })
     } else {
@@ -260,7 +222,7 @@ const login = async (req, res, next) => {
         }
     }
     } catch(err){
-
+        return next(err)
     }
 }
 
@@ -287,13 +249,11 @@ const register = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
     const foundUser = await User.findOne({ _id: req.decoded._id })
     if (foundUser) {
-        const { name, email, fullName, role , password , password2 , gender , phone } = req.body
-        if (name) foundUser.name = name
+        const { userName , phone , email , password } = req.body
         if (email) foundUser.email = email
-        if (fullName) foundUser.fullName = fullName
+        if (userName) foundUser.fullName = userName
         if (password)
         {
-           
             if (!foundUser.comparePassword(password))
             {    
                 return res.status(400).json({message: "sai mat khau cu" ,})
@@ -302,8 +262,6 @@ const updateUser = async (req, res, next) => {
                 foundUser.password = password2
             }
         }
-        if (role) foundUser.role = role
-        if (gender) foundUser.gender = gender
         if (phone) foundUser.phone = phone
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path)
@@ -335,7 +293,6 @@ module.exports = {
     index,
     newUser,
     getUser,
-    replaceUser,
     updateUser,
     getUserFollow,
     getUserDeck,

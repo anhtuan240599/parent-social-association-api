@@ -20,7 +20,7 @@ router.route('/:groupID/:deckID')
 router.route('/:groupID')
     .post(verifyToken,Group.joinGroup)
     .get(verifyToken,Group.getOneGroup)
-    .put(verifyToken,upload.single('image',1),Group.updateGroup)
+    .patch(verifyToken,upload.single('image',1),Group.updateGroup)
     .delete(verifyToken,Group.deleteGroup)
 
 router.route('/')

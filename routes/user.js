@@ -34,8 +34,7 @@ router.route('/lostPassword')
 
 router.route('/user')
     .get(verifyToken,userController.foundUser)
-    .put(verifyToken,upload.single('image',1),userController.replaceUser)
-    .patch(verifyToken,userController.updateUser)
+    .patch(verifyToken,upload.single('image',1),userController.updateUser)
 
 router.route('/:userID')
     .post(verifyToken,userController.followUser)
