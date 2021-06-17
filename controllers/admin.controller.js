@@ -44,7 +44,10 @@ const addListTeacher = async (req, res, next) => {
         }
         User.insertMany(csvData)
           .then(function () {
-            return res.status(200).json(csvData); // Success
+            return res.status(200).json({
+              success: true,
+              csvData
+            }); // Success
           })
           .catch(function (error) {
             console.log(error); // Failure
@@ -85,7 +88,10 @@ const addListUser = async (req, res, next) => {
 
         User.insertMany(csvData)
           .then(function () {
-            return res.status(200).json(csvData); // Success
+            return res.status(200).json({
+              success: true,
+              csvData
+            }); // Success
           })
           .catch(function (error) {
             console.log(error); // Failure
@@ -96,35 +102,55 @@ const addListUser = async (req, res, next) => {
 };
 
 const searchUser = async (req, res, next) => {
-  if (req.query.userID) {
-    const regex = new RegExp(fullTextSearchVi(req.query.userID), "gi");
-    const users = await User.find({ userID: regex });
-    return res.status(200).json({ success: true, users: users });
+  if (req.query.userName) {
+    const regex = new RegExp(fullTextSearchVi(req.query.userName), "gi");
+    const users = await User.find({
+      userID: regex
+    });
+    return res.status(200).json({
+      success: true,
+      users: users
+    });
   } else {
     const users = await User.find();
 
-    return res.status(200).json({ success: true, users: users });
+    return res.status(200).json({
+      success: true,
+      users: users
+    });
   }
 };
 const adminLogin = async (req, res, next) => {
-  const foundUser = await User.findOne({ email: "admin" });
+  const foundUser = await User.findOne({
+    email: "admin"
+  });
   if (!foundUser) {
-    res.status(403).json({ success: false });
+    res.status(403).json({
+      success: false
+    });
   } else {
     if (foundUser.comparePassword(req.body.password)) {
       let token = JWT.sign(foundUser.toJSON(), process.env.SECRET, {
         expiresIn: 6048000,
       });
-      res.status(200).json({ success: true, token: token });
+      res.status(200).json({
+        success: true,
+        token: token
+      });
     } else {
-      res.status(403).json({ success: false });
+      res.status(403).json({
+        success: false
+      });
     }
   }
 };
 
 const getNews = async (req, res, next) => {
   const news = await News.find();
-  return res.status(200).json({ success: true, news: news });
+  return res.status(200).json({
+    success: true,
+    news: news
+  });
 };
 const postNews = async (req, res, next) => {
   const news = req.body;
@@ -133,7 +159,9 @@ const postNews = async (req, res, next) => {
     const urls = [];
     const ids = [];
     for (const File of req.files) {
-      const { path } = File;
+      const {
+        path
+      } = File;
       const result = await cloudinary.uploader.upload(path);
       urls.push(result.secure_url);
       ids.push(result.public_id);
@@ -143,12 +171,18 @@ const postNews = async (req, res, next) => {
     newsPost.cloudinaryID = ids;
   }
   await newsPost.save();
-  return res.status(200).json({ success: true, news: newsPost });
+  return res.status(200).json({
+    success: true,
+    news: newsPost
+  });
 };
 const getEvents = async (req, res, next) => {
   const events = await Event.find();
 
-  return res.status(200).json({ success: true, events: events });
+  return res.status(200).json({
+    success: true,
+    events: events
+  });
 };
 const postEvent = async (req, res, next) => {
   const event = req.body;
@@ -157,7 +191,9 @@ const postEvent = async (req, res, next) => {
     const urls = [];
     const ids = [];
     for (const File of req.files) {
-      const { path } = File;
+      const {
+        path
+      } = File;
       const result = await cloudinary.uploader.upload(path);
       urls.push(result.secure_url);
       ids.push(result.public_id);
@@ -167,12 +203,19 @@ const postEvent = async (req, res, next) => {
     newEvent.cloudinaryID = ids;
   }
   await newEvent.save();
-  return res.status(200).json({ success: true, event: newEvent });
+  return res.status(200).json({
+    success: true,
+    event: newEvent
+  });
 };
 const getAll = async (req, res, next) => {
   const users = await User.find();
   const decks = await Deck.find().populate("owner").populate("reviews").exec();
-  return res.status(200).json({ success: true, users: users, decks: decks });
+  return res.status(200).json({
+    success: true,
+    users: users,
+    decks: decks
+  });
 };
 const deleteUser = async (req, res, next) => {
   // const foundUser = await User.findById(req.params.userID)
@@ -180,12 +223,23 @@ const deleteUser = async (req, res, next) => {
   // if (deck.like.indexOf(foundUser._id) > -1) {
   //     deck.like.pull(foundUser._id)
   // }
-  let deleteUser = await User.remove({ _id: req.params.userID });
-  await Deck.remove({ owner: req.params.userID });
-  await DeckGroup.remove({ owner: req.params.userID });
-  await Review.remove({ user: req.params.userID });
+  let deleteUser = await User.remove({
+    _id: req.params.userID
+  });
+  await Deck.remove({
+    owner: req.params.userID
+  });
+  await DeckGroup.remove({
+    owner: req.params.userID
+  });
+  await Review.remove({
+    user: req.params.userID
+  });
   if (deleteUser) {
-    return res.status(200).json({ success: true, message: "Da xoa user" });
+    return res.status(200).json({
+      success: true,
+      message: "Da xoa user"
+    });
   }
 };
 
@@ -196,12 +250,17 @@ const reportUser = async (req, res, next) => {
     report.image = result.secure_url;
   }
   await report.save();
-  return res.status(200).json({ success: true, report: report });
+  return res.status(200).json({
+    success: true,
+    report: report
+  });
 };
 
 const getReport = async (req, res, next) => {
   const reports = await Report.find();
-  return res.status(200).json({ reports: reports });
+  return res.status(200).json({
+    reports: reports
+  });
 };
 
 const reply = async (req, res, next) => {
@@ -220,7 +279,10 @@ const reply = async (req, res, next) => {
   transporter.sendMail(info, function (error, info) {});
   return res
     .status(200)
-    .json({ success: true, message: `Da gui thu den dia chi ${email}` });
+    .json({
+      success: true,
+      message: `Da gui thu den dia chi ${email}`
+    });
 };
 
 module.exports = {

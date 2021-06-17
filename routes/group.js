@@ -8,24 +8,23 @@ const verifyToken = require('../middlewares/verify-token')
 
 
 router.route('/decks/:groupID')
-    .post(verifyToken,upload.array('image',20),Group.newDeckGroup)
-    .get(verifyToken,Group.getDeckGroup)
+    .post(verifyToken, upload.array('image', 20), Group.newDeckGroup)
+    .get(verifyToken, Group.getDeckGroup)
 
 router.route('/deck/:deckID')
-    .get(verifyToken,Group.getOneDeckGroup)
+    .get(verifyToken, Group.getOneDeckGroup)
 
 router.route('/:groupID/:deckID')
-    .delete(verifyToken,Group.deleteDeckGroup)
+    .delete(verifyToken, Group.deleteDeckGroup)
 
 router.route('/:groupID')
-    .post(verifyToken,Group.joinGroup)
-    .get(verifyToken,Group.getOneGroup)
-    .patch(verifyToken,upload.single('image',1),Group.updateGroup)
-    .delete(verifyToken,Group.deleteGroup)
+    .post(verifyToken, Group.joinGroup)
+    .get(verifyToken, Group.getOneGroup)
+    .patch(verifyToken, upload.single('image', 1), Group.updateGroup)
+    .delete(verifyToken, Group.deleteGroup)
 
 router.route('/')
-    .get(verifyToken,Group.getGroup)
-    .post(verifyToken,upload.single('image',20),Group.newGroup)
+    .get(verifyToken, Group.getGroup)
+    .post(verifyToken, upload.single('image', 20), Group.newGroup)
 
-module.exports = router 
-
+module.exports = router

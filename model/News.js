@@ -2,11 +2,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const NewsSchema = new Schema({
-    
-    category : String ,
-    title : String,
-    description : String,
-    image : [{
+
+    category: String,
+    title: String,
+    description: String,
+    image: [{
         type: Object
     }],
     cloudinaryID: {
@@ -24,7 +24,7 @@ function getDate() {
     var fullTime = `${getFormatTime()}  ${getFormatDate()} `;
     return fullTime.toString();
 
-    function getFormatTime(){
+    function getFormatTime() {
         var hours = d.getHours().toString();
         hours = hours.length > 1 ? hours : '0' + hours;
 
@@ -32,6 +32,7 @@ function getDate() {
         minutes = minutes.length > 1 ? minutes : '0' + minutes;
         return hours + ':' + minutes;
     }
+
     function getFormatDate() {
         var year = d.getFullYear();
 
@@ -45,6 +46,6 @@ function getDate() {
     }
 }
 
-const News = mongoose.model('News',NewsSchema)
+const News = mongoose.model('News', NewsSchema)
 
 module.exports = News

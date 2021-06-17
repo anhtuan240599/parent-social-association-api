@@ -1,202 +1,196 @@
-const User = require('../model/User')
-const Deck = require('../model/Deck')
-const Year = require('../model/Year')
-const Joi = require('@hapi/joi')
-const { JWT_SECRET } = require('../config/index')
-const JWT = require('jsonwebtoken')
-const cloudinary = require('../middlewares/cloudinary')
-const nodemailer = require('nodemailer')
-const { compare, compareSync } = require('bcryptjs')
+const User = require("../model/User");
+const Deck = require("../model/Deck");
+const Year = require("../model/Year");
+const Joi = require("@hapi/joi");
+const { JWT_SECRET } = require("../config/index");
+const JWT = require("jsonwebtoken");
+const cloudinary = require("../middlewares/cloudinary");
+const nodemailer = require("nodemailer");
+const { compare, compareSync } = require("bcryptjs");
 
 const authFacebook = async (req, res, next) => {
-    const token = encodedToken(req.user._id)
+  const token = encodedToken(req.user._id);
 
-    res.setHeader('Authorization', token)
+  res.setHeader("Authorization", token);
 
-    return res.status(200).json({ success: true })
-}
+  return res.status(200).json({ success: true });
+};
 
-const followUser = async (req,res,next) => {
-    const foundUser = await User.findOne({ _id : req.decoded._id })
+const followUser = async (req, res, next) => {
+  const foundUser = await User.findOne({ _id: req.decoded._id });
 
-    const friend = await User.findById(req.params.userID)
-    
-    if (foundUser.following.indexOf(friend._id) > -1) {
-        foundUser.following.pull(friend._id)
-        friend.followers.pull(foundUser._id)
-        var message = "unfollow"
-        
-        
-    } else {
-        foundUser.following.push(friend._id)
-        friend.followers.push(foundUser._id)
-        var message = "follow"
-        
-    }
+  const friend = await User.findById(req.params.userID);
 
-    await foundUser.save()
-    await friend.save()
+  if (foundUser.following.indexOf(friend._id) > -1) {
+    foundUser.following.pull(friend._id);
+    friend.followers.pull(foundUser._id);
+    var message = "unfollow";
+  } else {
+    foundUser.following.push(friend._id);
+    friend.followers.push(foundUser._id);
+    var message = "follow";
+  }
 
-    return res.status(200).json({success:true , message: message })
-}
+  await foundUser.save();
+  await friend.save();
+
+  return res.status(200).json({ success: true, message: message });
+};
 
 const authGoogle = async (req, res, next) => {
+  const token = encodedToken(req.user._id);
 
-    const token = encodedToken(req.user._id)
+  res.setHeader("Authorization", token);
 
-    res.setHeader('Authorization', token)
-
-    return res.status(200).json({ success: true })
-}
+  return res.status(200).json({ success: true });
+};
 
 const encodedToken = (userID) => {
-    return JWT.sign({
-        iss: 'Tuan Huynh',
-        sub: userID,
-        iat: new Date().getTime(),
-        exp: new Date().setDate(new Date().getDate() + 3)
-
-    }, JWT_SECRET)
-}
+  return JWT.sign(
+    {
+      iss: "Tuan Huynh",
+      sub: userID,
+      iat: new Date().getTime(),
+      exp: new Date().setDate(new Date().getDate() + 3),
+    },
+    JWT_SECRET
+  );
+};
 
 const foundUser = async (req, res, next) => {
-
-    let foundUser = await User.findOne({ _id: req.decoded._id })
-        .populate('following')
-        .populate('followers')
-        .populate('decks')
-        .populate('deckShare')
-        .populate('yearID')
-        .populate('groups')
-        .populate('decksGroup')
-        .exec()
-    if (foundUser) {
-        res.json({
-            success: true,
-            user: foundUser
-        })
-    }
-
-}
+  let foundUser = await User.findOne({ _id: req.decoded._id })
+    .populate("following")
+    .populate("followers")
+    .populate("decks")
+    .populate("deckShare")
+    .populate("yearID")
+    .populate("groups")
+    .populate("decksGroup")
+    .exec();
+  if (foundUser) {
+    return res.status(200).json({
+      success: true,
+      user: foundUser,
+    });
+  }
+};
 
 const idSchema = Joi.object().keys({
-    userID: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
-})
+  userID: Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .required(),
+});
 
 const getUser = async (req, res, next) => {
-    const user = await User.findById(req.params.userID)
-        .populate('following')
-        .populate('followers')
-        .populate('decks')
-        .populate('deckShare')
-        .populate('yearID')
-        .populate('groups')
-        .populate('decksGroup')
-        .exec()
-    return res.status(200).json({ user })
-}
+  const user = await User.findById(req.params.userID)
+    .populate("following")
+    .populate("followers")
+    .populate("decks")
+    .populate("deckShare")
+    .populate("yearID")
+    .populate("groups")
+    .populate("decksGroup")
+    .exec();
+  return res.status(200).json({ success: true, user: user });
+};
 
-const getUserFollow = async (req,res,next) => {
-    const foundUser = await User.findOne({_id:req.decoded._id})
-    const users = await foundUser.following
-    return res.status(200).json({success:true,users:users})
-}
+const getUserFollow = async (req, res, next) => {
+  const foundUser = await User.findOne({ _id: req.decoded._id });
+  const users = await foundUser.following;
+  return res.status(200).json({ success: true, users: users });
+};
 
-const getUserYear = async (req,res,next) => {
-    const year = await Year.findOne({schoolYear : req.body.schoolYear})
-    .populate('users')
-    return res.status(200).json({users : year.users})
-}
+const getUserYear = async (req, res, next) => {
+  const year = await Year.findOne({ schoolYear: req.body.schoolYear }).populate(
+    "users"
+  );
+  return res.status(200).json({ users: year.users });
+};
 
 const getUserDeck = async (req, res, next) => {
-
-    
-    const user = await User.findOne({_id:req.decoded._id}).populate('decks')
-    return res.status(200).json({ decks: user.decks })
-
-}
+  const user = await User.findOne({ _id: req.decoded._id }).populate("decks");
+  return res.status(200).json({ success: true, decks: user.decks });
+};
 
 const index = async (req, res, next) => {
-
-    const users = await User.find({})
-    return res.status(200).json({ users })
-}
+  const users = await User.find({});
+  return res.status(200).json({ users });
+};
 
 const lostPassword = async (req, res, next) => {
-    const email = req.body.email
-    const transporter = nodemailer.createTransport('smtps://alumni.hutech%40@gmail.com:tuan12101991@smtp.gmail.com')
-    const foundUser = await User.findOne({ email })
-    if (!foundUser) {
-        return res.status(403).json({ success: false , message: "User not found" })
-    } else {
-        foundUser.password = "alumni123456";
-        const info = transporter.sendMail({
-            from: '"Alumni Hutech" <foo@example.com>', // sender address
-            to: foundUser.email, // list of receivers
-            subject: "Gửi lại mật khẩu đăng nhập", // Subject line
-            text: "Mật khẩu đăng nhập của tài khoản bạn là : alumni123456", // plain text body
-            html: "<b>alumni123456</b>", // html body
-        });
+  const email = req.body.email;
+  const transporter = nodemailer.createTransport(
+    "smtps://alumni.hutech%40@gmail.com:tuan12101991@smtp.gmail.com"
+  );
+  const foundUser = await User.findOne({ email });
+  if (!foundUser) {
+    return res.status(403).json({ success: false, message: "User not found" });
+  } else {
+    foundUser.password = "alumni123456";
+    const info = transporter.sendMail({
+      from: '"Alumni Hutech" <foo@example.com>', // sender address
+      to: foundUser.email, // list of receivers
+      subject: "Gửi lại mật khẩu đăng nhập", // Subject line
+      text: "Mật khẩu đăng nhập của tài khoản bạn là : alumni123456", // plain text body
+      html: "<b>alumni123456</b>", // html body
+    });
 
-        transporter.sendMail(info, function (error, info) {
-            
-        }) 
-        foundUser.save()
-        return res.status(200).json({success:true , message: "Mat khau da duoc gui den email cua ban"})
-    }
-}
+    transporter.sendMail(info, function (error, info) {});
+    foundUser.save();
+    return res.status(200).json({
+      success: true,
+      message: "Mat khau da duoc gui den email cua ban",
+    });
+  }
+};
 
 const newUser = async (req, res, next) => {
-
-    const newUser = new User(req.value.body)
-    await newUser.save()
-    return res.status(201).json({ user: newUser })
-
-}
+  const newUser = new User(req.value.body);
+  await newUser.save();
+  return res.status(201).json({ user: newUser });
+};
 
 const newUserDeck = async (req, res, next) => {
+  const { userID } = req.value.params;
 
-    const { userID } = req.value.params
+  const newDeck = new Deck(req.value.body);
 
-    const newDeck = new Deck(req.value.body)
+  const user = await User.findById(userID);
 
-    const user = await User.findById(userID)
+  newDeck.owner = user;
 
-    newDeck.owner = user
+  newDeck.save();
 
-    newDeck.save()
+  user.decks.push(newDeck._id);
 
-    user.decks.push(newDeck._id)
+  await user.save();
 
-    await user.save()
-
-    res.status(201).json({ deck: newDeck })
-}
+  res.status(201).json({ deck: newDeck });
+};
 
 const postYear = async (req, res, next) => {
-    const newYear = new Year();
-    newYear.schoolYear = req.body.schoolYear
+  const newYear = new Year();
+  newYear.schoolYear = req.body.schoolYear;
 
-    await newYear.save()
+  await newYear.save();
 
-    return res.status(200).json({ success: true })
-}
+  return res.status(200).json({ success: true });
+};
 const getYear = async (req, res, next) => {
-    const foundYear = await Year.find({})
-    return res.status(200).json({ success: true, foundYear })
-}
+  const foundYear = await Year.find({});
+  return res.status(200).json({ success: true, foundYear });
+};
 
-const shareDeck = async (req,res,next) => {
-    const foundUser = await User.findOne({_id : req.decoded._id})
-    const deck = await Deck.findById(req.params.deckID)
-    foundUser.deckShare.push(deck._id)
-    foundUser.save()
-    return res.status(200).json({success:true})
-
-}
+const shareDeck = async (req, res, next) => {
+  const foundUser = await User.findOne({ _id: req.decoded._id });
+  const deck = await Deck.findById(req.params.deckID);
+  foundUser.deckShare.push(deck._id);
+  foundUser.save();
+  return res.status(200).json({ success: true });
+};
 const secret = async (req, res, next) => {
-    return res.status(200).json({ success: true })
-}
+  return res.status(200).json({ success: true });
+};
 
 // const login = async (req,res,next) => {
 //     const token = encodedToken(req.user._id)
@@ -207,105 +201,101 @@ const secret = async (req, res, next) => {
 // }
 
 const login = async (req, res, next) => {
-    try{
-    const foundUser = await User.findOne({ userID: req.body.userID })
+  try {
+    const foundUser = await User.findOne({ userID: req.body.userID });
     if (!foundUser) {
-        res.status(403).json({ success: false })
+      res.status(403).json({ success: false });
     } else {
-        if (foundUser.comparePassword(req.body.password)) {
-            let token = JWT.sign(foundUser.toJSON(), process.env.SECRET, {
-                expiresIn: 6048000
-            })
-            res.status(200).json({ success: true, token: token })
-        } else {
-            res.status(403).json({ success: false })
-        }
+      if (foundUser.comparePassword(req.body.password)) {
+        let token = JWT.sign(foundUser.toJSON(), process.env.SECRET, {
+          expiresIn: 6048000,
+        });
+        res.status(200).json({ success: true, token: token });
+      } else {
+        res.status(403).json({ success: false });
+      }
     }
-    } catch(err){
-        return next(err)
-    }
-}
+  } catch (err) {
+    return next(err);
+  }
+};
 
 const register = async (req, res, next) => {
-    const { name, email, password, yearID } = req.body
+  const { name, email, password, yearID } = req.body;
 
-    const foundUser = await User.findOne({ email })
-    if (foundUser) return res.status(403).json({ error: { message: 'Email is already in use' } })
+  const foundUser = await User.findOne({ email });
+  if (foundUser)
+    return res
+      .status(403)
+      .json({ error: { message: "Email is already in use" } });
 
-    const newUser = new User({ name, email, password, yearID })
+  const newUser = new User({ name, email, password, yearID });
 
-    await newUser.save()
+  await newUser.save();
 
-    //Encode token
-    const token = JWT.sign(newUser.toJSON(), process.env.SECRET, {
-        expiresIn: 6048000
-    });
+  //Encode token
+  const token = JWT.sign(newUser.toJSON(), process.env.SECRET, {
+    expiresIn: 6048000,
+  });
 
-
-
-    return res.status(200).json({ success: true, token: token })
-}
+  return res.status(200).json({ success: true, token: token });
+};
 
 const updateUser = async (req, res, next) => {
-    const foundUser = await User.findOne({ _id: req.decoded._id })
-    if (foundUser) {
-        const { userName , phone , email , password } = req.body
-        if (email) foundUser.email = email
-        if (userName) foundUser.fullName = userName
-        if (password)
-        {
-            if (!foundUser.comparePassword(password))
-            {    
-                return res.status(400).json({message: "sai mat khau cu" ,})
-            }
-            else {
-                foundUser.password = password2
-            }
-        }
-        if (phone) foundUser.phone = phone
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path)
-            foundUser.avatar = result.secure_url
-        }
-        await foundUser.save();
+  const foundUser = await User.findOne({ _id: req.decoded._id });
+  if (foundUser) {
+    const { userName, phone, email, password } = req.body;
+    if (email) foundUser.email = email;
+    if (userName) foundUser.fullName = userName;
+    if (password) {
+      if (!foundUser.comparePassword(password)) {
+        return res.status(400).json({ message: "sai mat khau cu" });
+      } else {
+        foundUser.password = password2;
+      }
     }
-    return res.status(200).json({ success: true })
-
-
-}
+    if (phone) foundUser.phone = phone;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      foundUser.avatar = result.secure_url;
+    }
+    await foundUser.save();
+  }
+  return res.status(200).json({ success: true });
+};
 
 function getUnique(arr, comp) {
+  const unique = arr
+    .map((e) => e[comp])
 
-    const unique = arr
-    .map(e => e[comp])
-   
     // store the keys of the unique objects
     .map((e, i, final) => final.indexOf(e) === i && i)
-   
+
     // eliminate the dead keys & store unique objects
-    .filter(e => arr[e]).map(e => arr[e]);
-   
-    return unique;
+    .filter((e) => arr[e])
+    .map((e) => arr[e]);
+
+  return unique;
 }
 
 module.exports = {
-    followUser,
-    index,
-    newUser,
-    getUser,
-    updateUser,
-    getUserFollow,
-    getUserDeck,
-    newUserDeck,
-    login,
-    register,
-    secret,
-    shareDeck,
-    authGoogle,
-    authFacebook,
-    foundUser,
-    postYear,
-    getYear,
-    lostPassword,
-    getUserYear
-}
+  followUser,
+  index,
+  newUser,
+  getUser,
+  updateUser,
+  getUserFollow,
+  getUserDeck,
+  newUserDeck,
+  login,
+  register,
+  secret,
+  shareDeck,
+  authGoogle,
+  authFacebook,
+  foundUser,
+  postYear,
+  getYear,
+  lostPassword,
+  getUserYear,
+};
