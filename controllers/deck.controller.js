@@ -24,10 +24,10 @@ const getDeck = async (req, res, next) => {
 };
 
 const index = async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const perPage = 5;
-  const start = (page - 1) * perPage;
-  const end = page * perPage;
+  const pageNumber = parseInt(req.query.pageNumber) || 1;
+  const perPage = 10;
+  const start = (pageNumber - 1) * perPage;
+  const end = pageNumber * perPage;
   if (req.query.content) {
     const regex = new RegExp(fullTextSearchVi(req.query.content), "gi");
     const decks = await Deck.find({ name: regex })
@@ -35,18 +35,22 @@ const index = async (req, res, next) => {
       .populate("reviews")
       .exec();
 
-    return res
-      .status(200)
-      .json({ success: true, decks: decks.slice(start, end) });
+    return res.status(200).json({
+      success: true,
+      meta: { total: decks.length, pageSize: perPage, pageNumber: page },
+      decks: decks.slice(start, end),
+    });
   } else {
     const decks = await Deck.find()
       .populate("owner")
       .populate("reviews")
       .exec();
 
-    return res
-      .status(200)
-      .json({ success: true, decks: decks.slice(start, end) });
+    return res.status(200).json({
+      success: true,
+      meta: { total: decks.length, pageSize: perPage, pageNumber: pageNumber },
+      decks: decks.slice(start, end),
+    });
   }
 };
 
