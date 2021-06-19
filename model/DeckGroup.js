@@ -53,6 +53,7 @@ function getDate() {
         day = day.length > 1 ? day : '0' + day;
 
         return day + '/' + month + '/' + year;
+        
     }
 }
 
