@@ -25,7 +25,7 @@ const getDeck = async (req, res, next) => {
 
 const index = async (req, res, next) => {
   const pageNumber = parseInt(req.query.pageNumber) || 1;
-  const perPage = 10;
+  const perPage = parseInt(req.query.pageSize) || 5;
   const start = (pageNumber - 1) * perPage;
   const end = pageNumber * perPage;
   if (req.query.content) {
