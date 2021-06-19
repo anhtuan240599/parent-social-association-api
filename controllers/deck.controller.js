@@ -35,10 +35,12 @@ const index = async (req, res, next) => {
       .populate("reviews")
       .exec();
 
+    const posts = decks.slice().reverse();
+
     return res.status(200).json({
       success: true,
-      meta: { total: decks.length, pageSize: perPage, pageNumber: page },
-      decks: decks.slice(start, end),
+      meta: { total: decks.length, pageSize: perPage, pageNumber: pageNumber },
+      decks: posts.slice(start,end),
     });
   } else {
     const decks = await Deck.find()
@@ -46,10 +48,12 @@ const index = async (req, res, next) => {
       .populate("reviews")
       .exec();
 
+    const posts = decks.slice().reverse();
+
     return res.status(200).json({
       success: true,
       meta: { total: decks.length, pageSize: perPage, pageNumber: pageNumber },
-      decks: decks.slice(start, end),
+      decks: posts.slice(start,end),
     });
   }
 };
