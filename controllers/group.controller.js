@@ -1,10 +1,8 @@
 const User = require("../model/User");
 const DeckGroup = require("../model/DeckGroup");
 const cloudinary = require("../middlewares/cloudinary");
-const fullTextSearch = require("fulltextsearch");
-const { findById } = require("../model/User");
 const Group = require("../model/Group");
-const fullTextSearchVi = fullTextSearch.vi;
+const methodOverride = require('method-override')
 
 const deleteDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.remove({ _id: req.params.deckID });
