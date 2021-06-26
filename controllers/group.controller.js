@@ -2,7 +2,7 @@ const User = require("../model/User");
 const DeckGroup = require("../model/DeckGroup");
 const cloudinary = require("../middlewares/cloudinary");
 const Group = require("../model/Group");
-const methodOverride = require('method-override')
+const methodOverride = require("method-override");
 
 const deleteDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.remove({ _id: req.params.deckID });
@@ -54,6 +54,7 @@ const getDeckGroup = async (req, res, next) => {
     .populate({ path: "decks", populate: { path: "owner" } })
     .populate("users")
     .populate("admin")
+    .populate({ path: "reviews", populate: { path: "user" } })
     .exec();
   return res.status(200).json({ success: true, group: group });
 };
