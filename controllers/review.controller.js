@@ -8,6 +8,8 @@ const cloudinary = require('../middlewares/cloudinary')
 
 const reviewDeck = async (req,res,next) => {
     const review = new Review();
+    const deck = await Deck.findById(req.params.deckID)
+    console.log(deck)
     const {headline , body  } = req.body
     review.headline = headline
     review.body = body
@@ -19,7 +21,8 @@ const reviewDeck = async (req,res,next) => {
     review.user = req.decoded._id
     review.deckID = req.params.deckID
 
-    await Deck.update({ $push: review._id })
+    await deck.reviews.push(review._id)
+    await deck.save()
 
     const saveReview = await review.save()
 
