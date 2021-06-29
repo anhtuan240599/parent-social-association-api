@@ -125,10 +125,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", (data) => {
-    socket.broadcast.emit("typing", data);
+    socket.to(socket.Room).emit("typing", data);
   });
   socket.on("stopTyping", (data) => {
-    socket.broadcast.emit("stopTyping", data);
+    socket.to(socket.Room).emit("stopTyping", data);
   });
   // create a room went user want to chat with another user
   socket.on("joined", async (data) => {
@@ -136,7 +136,6 @@ io.on("connection", (socket) => {
     socket.join(data.user);
     socket.Room = data.friend;
     socket.Room2 = data.user;
-    console.log(socket.adapter.rooms);
     socket.broadcast.emit("joined", data);
   });
   //  user comment
