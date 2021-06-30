@@ -13,7 +13,7 @@ const swaggerUi = require("swagger-ui-express");
 var server = require("http").Server(app);
 var io = require("socket.io")(server, {
   cors: {
-    origin: ["http://localhost:8888", "http://localhost:4000"],
+    origin: ["http://localhost:8888", "http://localhost:4000", "https://thepsa.site"],
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -24,7 +24,8 @@ app.use(function (req, res, next) {
   res.header(
     "Access-Control-Allow-Origin",
     "http://localhost:8888",
-    "http://localhost:4000"
+    "http://localhost:4000",
+    "https://thepsa.site"
   ); // update to match the domain you will make the request from
   res.header(
     "Access-Control-Allow-Headers",
@@ -68,9 +69,6 @@ const messageRoute = require("./routes/message");
 const groupRoute = require("./routes/group");
 const adminRoute = require("./routes/admin");
 const roomRoute = require("./routes/room");
-const { type } = require("os");
-const { getMaxListeners } = require("./model/User");
-const { rejects } = require("assert");
 
 // Middleware
 app.use(cors());
