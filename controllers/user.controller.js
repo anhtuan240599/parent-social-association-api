@@ -244,14 +244,14 @@ const register = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   const foundUser = await User.findOne({ _id: req.decoded._id });
   if (foundUser) {
-    const { userName, phone, email, password } = req.body;
+    const { userName, phone, email, password, newPassword } = req.body;
     if (email) foundUser.email = email;
     if (userName) foundUser.fullName = userName;
     if (password) {
       if (!foundUser.comparePassword(password)) {
         return res.status(400).json({ message: "sai mat khau cu" });
       } else {
-        foundUser.password = password2;
+        foundUser.password = newPassword;
       }
     }
     if (phone) foundUser.phone = phone;
