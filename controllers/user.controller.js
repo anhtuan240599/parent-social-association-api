@@ -246,7 +246,7 @@ const updateUser = async (req, res, next) => {
   if (foundUser) {
     const { userName, phone, email, password, newPassword } = req.body;
     if (email) foundUser.email = email;
-    if (userName) foundUser.fullName = userName;
+    if (userName) foundUser.userName = userName;
     if (password) {
       if (!foundUser.comparePassword(password)) {
         return res.status(400).json({ message: "sai mat khau cu" });

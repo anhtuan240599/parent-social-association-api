@@ -17,7 +17,7 @@ const getUserDeck = async (req, res, next) => {
 const getDeck = async (req, res, next) => {
   const deck = await Deck.findById(req.params.deckID)
     .populate("owner")
-    .populate("reviews")
+    .populate({path: "reviews", populate:{path: "user"}})
     .exec();
 
   return res.status(200).json({ success: true, deck: deck });

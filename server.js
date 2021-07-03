@@ -13,7 +13,11 @@ const swaggerUi = require("swagger-ui-express");
 var server = require("http").Server(app);
 var io = require("socket.io")(server, {
   cors: {
-    origin: ["http://localhost:8888", "http://localhost:4000", "https://thepsa.site"],
+    origin: [
+      "http://localhost:8888",
+      "http://localhost:4000",
+      "https://thepsa.site",
+    ],
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
