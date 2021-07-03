@@ -110,6 +110,8 @@ const joinGroup = async (req, res, next) => {
 const newGroup = async (req, res, next) => {
   const admin = await User.findOne({ _id: req.decoded._id });
   const users = await User.find({ class: req.body.class });
+  const teacher = await User.find({formTeacher: req.body.class})
+  const allUsers = [...users,...teacher]
   const group = req.body;
   group.admin = admin._id;
   const newGroup = new Group(group);
@@ -118,8 +120,7 @@ const newGroup = async (req, res, next) => {
     newGroup.image = result.secure_url;
   }
   console.log(newGroup._id);
-  for (let user of users) {
-    console.log(user._id);
+  for (let user of allUsers) {
     await newGroup.users.push(user._id);
     await user.groups.push(newGroup._id);
     user.save();
