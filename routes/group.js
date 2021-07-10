@@ -23,6 +23,9 @@ router.route('/:groupID')
     .patch(verifyToken, upload.single('image', 1), Group.updateGroup)
     .delete(verifyToken, Group.deleteGroup)
 
+router.route('/:groupID/users')
+    .get(verifyToken, Group.getUsersOfGroup)
+
 router.route('/')
     .get(verifyToken, Group.getGroup)
     .post(verifyToken, upload.single('image', 20), Group.newGroup)

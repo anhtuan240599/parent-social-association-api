@@ -2,10 +2,10 @@ const User = require("../model/User");
 const Deck = require("../model/Deck");
 const Year = require("../model/Year");
 const Joi = require("@hapi/joi");
+const mail = require("../config/mail");
 const { JWT_SECRET } = require("../config/index");
 const JWT = require("jsonwebtoken");
 const cloudinary = require("../middlewares/cloudinary");
-const nodemailer = require("nodemailer");
 const { compare, compareSync } = require("bcryptjs");
 
 const authFacebook = async (req, res, next) => {
@@ -119,29 +119,18 @@ const index = async (req, res, next) => {
 
 const lostPassword = async (req, res, next) => {
   const email = req.body.email;
-  const transporter = nodemailer.createTransport(
-    "smtps://alumni.hutech%40@gmail.com:tuan12101991@smtp.gmail.com"
-  );
-  const foundUser = await User.findOne({ email });
+  const header = req.header('Referer')
+  const foundUser = await User.find({ email: email });
   if (!foundUser) {
-    return res.status(403).json({ success: false, message: "User not found" });
-  } else {
-    foundUser.password = "alumni123456";
-    const info = transporter.sendMail({
-      from: '"Alumni Hutech" <foo@example.com>', // sender address
-      to: foundUser.email, // list of receivers
-      subject: "Gửi lại mật khẩu đăng nhập", // Subject line
-      text: "Mật khẩu đăng nhập của tài khoản bạn là : alumni123456", // plain text body
-      html: "<b>alumni123456</b>", // html body
-    });
-
-    transporter.sendMail(info, function (error, info) {});
-    foundUser.save();
-    return res.status(200).json({
-      success: true,
-      message: "Mat khau da duoc gui den email cua ban",
-    });
+    return res.status(404).json({ message: " email này không tồn tại " });
   }
+  mail.forgotPassword(email, foundUser, header);
+  await foundUser.save();
+  return res.status(200).json({
+    success: true,
+    message:
+      "mail đã được gửi đến tài khoản của bạn hãy kiểm tra để đổi mật khẩu",
+  });
 };
 
 const newUser = async (req, res, next) => {

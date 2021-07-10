@@ -5,6 +5,7 @@ const GroupSchema = new Schema({
     
     name :String,
     description:String,
+    class: String,
     image : String,
     yearID : String,
     admin : {type:Schema.Types.ObjectId, ref:'User'},

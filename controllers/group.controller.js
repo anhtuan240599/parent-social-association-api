@@ -2,7 +2,8 @@ const User = require("../model/User");
 const DeckGroup = require("../model/DeckGroup");
 const cloudinary = require("../middlewares/cloudinary");
 const Group = require("../model/Group");
-const methodOverride = require("method-override");
+const fullTextSearch = require("fulltextsearch");
+const fullTextSearchVi = fullTextSearch.vi;
 
 const deleteDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.remove({ _id: req.params.deckID });
@@ -41,6 +42,27 @@ const getOneGroup = async (req, res, next) => {
     .populate("admin");
   return res.status(200).json({ success: true, groups: groups });
 };
+
+const getUsersOfGroup = async (req, res, next) => {
+  if (req.query.userName) {
+    const regex = new RegExp(fullTextSearchVi(req.query.userName), "i");
+    const userName = await User.find(
+      {
+        userName: regex,
+        groups: req.params.groupID,
+      },
+      ["userName", "avatar"]
+    );
+    return res.status(200).json({ success: true, userName: userName });
+  } else {
+    const userName = await User.find({ groups: req.params.groupID }, [
+      "userName",
+      "avatar",
+    ]);
+    return res.status(200).json({ success: true, userName: userName });
+  }
+};
+
 const getOneDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.findById(req.params.deckID)
     .populate("owner")
@@ -110,8 +132,8 @@ const joinGroup = async (req, res, next) => {
 const newGroup = async (req, res, next) => {
   const admin = await User.findOne({ _id: req.decoded._id });
   const users = await User.find({ class: req.body.class });
-  const teacher = await User.find({formTeacher: req.body.class})
-  const allUsers = [...users,...teacher]
+  const teacher = await User.find({ formTeacher: req.body.class });
+  const allUsers = [...users, ...teacher];
   const group = req.body;
   group.admin = admin._id;
   const newGroup = new Group(group);
@@ -153,6 +175,7 @@ module.exports = {
   getDeckGroup,
   getOneGroup,
   getOneDeckGroup,
+  getUsersOfGroup,
   newGroup,
   joinGroup,
   getGroup,

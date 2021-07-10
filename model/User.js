@@ -36,6 +36,9 @@ const UserSchema = new Schema({
     dean: {
         type: String
     },
+    emailToken:{
+        type: String
+    },
     following:[{
         type: Schema.Types.ObjectId
     }],

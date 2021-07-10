@@ -12,4 +12,6 @@ router
   .post(verifyToken, upload.single("image", 1), messageController.sendMessage)
   .get(verifyToken, messageController.getMessage);
 
+router.route("/").get(verifyToken, messageController.getUsers);
+
 module.exports = router;
