@@ -40,6 +40,8 @@ router.route("/year").get(userController.getYear).post(userController.postYear);
 
 router.route("/lostPassword").post(userController.lostPassword);
 
+router.route('/resetPassword/:resetToken').post(userController.resetPassword)
+
 router
   .route("/user")
   .get(verifyToken, userController.foundUser)

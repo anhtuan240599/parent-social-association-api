@@ -119,18 +119,39 @@ const index = async (req, res, next) => {
 
 const lostPassword = async (req, res, next) => {
   const email = req.body.email;
-  const header = req.header('Referer')
-  const foundUser = await User.find({ email: email });
+  const header = req.body.uri;
+  const foundUser = await User.findOne({ email: email });
   if (!foundUser) {
     return res.status(404).json({ message: " email này không tồn tại " });
   }
-  mail.forgotPassword(email, foundUser, header);
+  const token = JWT.sign({ email }, process.env.SECRET, {
+    expiresIn: 6048000,
+  });
+  mail.forgotPassword(email, header, token);
+  foundUser.emailToken = token;
   await foundUser.save();
   return res.status(200).json({
     success: true,
     message:
       "mail đã được gửi đến tài khoản của bạn hãy kiểm tra để đổi mật khẩu",
   });
+};
+
+const resetPassword = async (req, res, next) => {
+  const foundUser = await User.findOne({ emailToken: req.params.resetToken });
+  const { password, confirmPassword } = req.body;
+  if (!foundUser) {
+    return res.status(400).json({ message: "token không hợp lệ!" });
+  }
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "mật khẩu không trùng khớp" });
+  }
+  foundUser.password = password;
+  foundUser.emailToken = null;
+  await foundUser.save().catch(err => next(err))
+  return res
+    .status(200)
+    .json({ success: true, message: "cập nhật mật khẩu thành công" });
 };
 
 const newUser = async (req, res, next) => {
@@ -287,4 +308,5 @@ module.exports = {
   getYear,
   lostPassword,
   getUserYear,
+  resetPassword,
 };
