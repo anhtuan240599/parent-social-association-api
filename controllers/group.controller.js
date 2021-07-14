@@ -86,6 +86,10 @@ const getDeckGroup = async (req, res, next) => {
       populate: { path: "owner" },
       populate: { path: "reviews", populate: { path: "user" } },
     })
+    .populate({
+      path: "decks",
+      populate: { path: "owner" },
+    })
     .populate("users")
     .populate("admin")
     .populate({ path: "reviews", populate: { path: "user" } })
