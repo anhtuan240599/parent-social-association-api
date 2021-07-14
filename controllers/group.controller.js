@@ -81,7 +81,7 @@ const getOneDeckGroup = async (req, res, next) => {
 };
 const getDeckGroup = async (req, res, next) => {
   const group = await Group.findById(req.params.groupID)
-    .populate({ path: "decks", populate: { path: "owner" } })
+    .populate({ path: "decks", populate: { path: "owner" },populate: { path: "reviews" } })
     .populate("users")
     .populate("admin")
     .populate({ path: "reviews", populate: { path: "user" } })
