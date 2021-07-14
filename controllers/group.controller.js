@@ -81,7 +81,11 @@ const getOneDeckGroup = async (req, res, next) => {
 };
 const getDeckGroup = async (req, res, next) => {
   const group = await Group.findById(req.params.groupID)
-    .populate({ path: "decks", populate: { path: "owner" },populate: { path: "reviews" } })
+    .populate({
+      path: "decks",
+      populate: { path: "owner" },
+      populate: { path: "reviews", populate: { path: "user" } },
+    })
     .populate("users")
     .populate("admin")
     .populate({ path: "reviews", populate: { path: "user" } })
@@ -160,22 +164,21 @@ const newGroup = async (req, res, next) => {
 
 const newTeacherGroup = async (req, res, next) => {
   const admin = await User.findOne({ _id: req.decoded._id });
-  const teachers = await User.find({role: "teacher"})
-  const group = req.body
-  group.admin = admin._id
-  const newGroup= new Group(group);
+  const teachers = await User.find({ role: "teacher" });
+  const group = req.body;
+  group.admin = admin._id;
+  const newGroup = new Group(group);
   if (req.file) {
     const result = await cloudinary.uploader.upload(req.file.path);
     newGroup.image = result.secure_url;
   }
   for (let teacher of teachers) {
-    await newGroup.users.push(teacher._id)
-    await teacher.groups.push(newGroup._id)
+    await newGroup.users.push(teacher._id);
+    await teacher.groups.push(newGroup._id);
     teacher.save();
   }
-  await newGroup.save()
-  return res.status(201).json({success:true,group: newGroup})
-
+  await newGroup.save();
+  return res.status(201).json({ success: true, group: newGroup });
 };
 
 const updateGroup = async (req, res, next) => {
