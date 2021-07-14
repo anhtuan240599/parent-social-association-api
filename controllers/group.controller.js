@@ -174,7 +174,7 @@ const newTeacherGroup = async (req, res, next) => {
     teacher.save();
   }
   await newGroup.save()
-  return res.status(201).json({success:true,group: group})
+  return res.status(201).json({success:true,group: newGroup})
 
 };
 

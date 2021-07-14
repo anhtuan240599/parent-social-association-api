@@ -29,10 +29,10 @@ router
   .get(verifyToken, Group.getGroup)
   .post(verifyToken, upload.single("image", 20), Group.newGroup);
 
-router.route("/users").get(verifyToken, Group.getAllUsersOfAllGroup);
+router.route("/users/getAll").get(verifyToken, Group.getAllUsersOfAllGroup);
 
 router
-  .route("/teachers")
+  .route("/teachers/newGroup")
   .post(verifyToken, upload.single("image", 1), Group.newTeacherGroup);
 
 module.exports = router;
