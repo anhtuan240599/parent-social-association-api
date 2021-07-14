@@ -43,6 +43,14 @@ const getOneGroup = async (req, res, next) => {
   return res.status(200).json({ success: true, groups: groups });
 };
 
+const getAllUsersOfAllGroup = async (req, res, next) => {
+  const foundUser = await User.findById(req.decoded._id).populate({
+    path: "groups",
+    populate: { path: "users" },
+  });
+  return res.status(200).json({ success: true, user: foundUser });
+};
+
 const getUsersOfGroup = async (req, res, next) => {
   if (req.query.userName) {
     const regex = new RegExp(fullTextSearchVi(req.query.userName), "i");
@@ -141,7 +149,6 @@ const newGroup = async (req, res, next) => {
     const result = await cloudinary.uploader.upload(req.file.path);
     newGroup.image = result.secure_url;
   }
-  console.log(newGroup._id);
   for (let user of allUsers) {
     await newGroup.users.push(user._id);
     await user.groups.push(newGroup._id);
@@ -149,6 +156,26 @@ const newGroup = async (req, res, next) => {
   }
   await newGroup.save();
   return res.status(201).json({ success: true, group: group });
+};
+
+const newTeacherGroup = async (req, res, next) => {
+  const admin = await User.findOne({ _id: req.decoded._id });
+  const teachers = await User.find({role: "teacher"})
+  const group = req.body
+  group.admin = admin._id
+  const newGroup= new Group(group);
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    newGroup.image = result.secure_url;
+  }
+  for (let teacher of teachers) {
+    await newGroup.users.push(teacher._id)
+    await teacher.groups.push(newGroup._id)
+    teacher.save();
+  }
+  await newGroup.save()
+  return res.status(201).json({success:true,group: group})
+
 };
 
 const updateGroup = async (req, res, next) => {
@@ -176,7 +203,9 @@ module.exports = {
   getOneGroup,
   getOneDeckGroup,
   getUsersOfGroup,
+  getAllUsersOfAllGroup,
   newGroup,
+  newTeacherGroup,
   joinGroup,
   getGroup,
   updateGroup,
