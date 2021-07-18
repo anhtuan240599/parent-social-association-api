@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
   });
   // send message to room
   socket.on("chat-message", async (data) => {
-    socket.to(socket.Room).to(socket.Room2).emit("chat-message", data);
+    socket.to(socket.Room).emit("chat-message", data);
   });
 
   socket.on("typing", (data) => {
@@ -137,7 +137,8 @@ io.on("connection", (socket) => {
     socket.join(data.friend);
     socket.join(data.user);
     socket.Room = data.friend;
-    socket.Room2 = data.user;
+    socket.Room = data.user;
+    console.log(socket.rooms)
     socket.broadcast.emit("joined", data);
   });
   //  user comment
