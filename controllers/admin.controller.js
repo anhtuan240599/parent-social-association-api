@@ -9,6 +9,7 @@ const JWT = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const Group = require("../model/Group");
 const DeckGroup = require("../model/DeckGroup");
+const Notification = require('../model/Notification')
 const fastcsv = require("fast-csv");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
@@ -227,6 +228,16 @@ const postEvent = async (req, res, next) => {
     newEvent.cloudinaryID = ids;
   }
   await newEvent.save();
+  const newNotification = new Notification({
+    title: req.body.title,
+    creator: "admin"
+  });
+  await newNotification.save()
+  const users = await User.find()
+  for(let user of users ){
+    user.notification.push(newNotification._id)
+    await user.save()
+  }
   return res.status(200).json({
     success: true,
     event: newEvent,

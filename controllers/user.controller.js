@@ -66,6 +66,7 @@ const foundUser = async (req, res, next) => {
     .populate("yearID")
     .populate("groups")
     .populate("decksGroup")
+    .populate("notification")
     .exec();
   if (foundUser) {
     return res.status(200).json({
@@ -111,6 +112,7 @@ const getUserDeck = async (req, res, next) => {
   const user = await User.findOne({ _id: req.decoded._id }).populate("decks");
   return res.status(200).json({ success: true, decks: user.decks });
 };
+
 
 const index = async (req, res, next) => {
   const users = await User.find({});

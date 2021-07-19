@@ -49,6 +49,12 @@ const UserSchema = new Schema({
       type: Schema.Types.ObjectId,
     },
   ],
+  notification: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Notification",
+    },
+  ],
   yearID: {
     type: Schema.Types.ObjectId,
     ref: "Year",
