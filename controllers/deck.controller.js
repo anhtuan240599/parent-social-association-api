@@ -2,7 +2,7 @@ const User = require("../model/User");
 const Deck = require("../model/Deck");
 const DeckGroup = require("../model/DeckGroup");
 const cloudinary = require("../middlewares/cloudinary");
-const Notification = require('../model/Notification')
+const Notification = require("../model/Notification");
 const fullTextSearch = require("fulltextsearch");
 const Year = require("../model/Year");
 const fullTextSearchVi = fullTextSearch.vi;
@@ -18,7 +18,7 @@ const getUserDeck = async (req, res, next) => {
 const getDeck = async (req, res, next) => {
   const deck = await Deck.findById(req.params.deckID)
     .populate("owner")
-    .populate({path: "reviews", populate:{path: "user"}})
+    .populate({ path: "reviews", populate: { path: "user" } })
     .exec();
 
   return res.status(200).json({ success: true, deck: deck });
@@ -61,7 +61,7 @@ const index = async (req, res, next) => {
 
 const likeDeck = async (req, res, next) => {
   const deck = await Deck.findById(req.params.deckID);
-  const owner = await User.findOne({_id: deck.owner})
+  const owner = await User.findOne({ _id: deck.owner });
   const foundUser = await User.findById({ _id: req.decoded._id });
 
   if (deck.like.indexOf(foundUser._id) > -1) {
@@ -73,11 +73,11 @@ const likeDeck = async (req, res, next) => {
     const newNotification = new Notification({
       creator: foundUser.userName,
       title: `${foundUser.userName} đã thích bài viết của bạn`,
-      postId: deck._id
+      postId: deck._id,
     });
-    await newNotification.save()
-    await owner.userNotification.push(newNotification._id)
-    await owner.save()
+    await newNotification.save();
+    await owner.userNotification.push(newNotification._id);
+    await owner.save();
   }
   deck.save();
 
@@ -86,7 +86,7 @@ const likeDeck = async (req, res, next) => {
 
 const likeDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.findById(req.params.deckID);
-  const owner = await User.findOne({_id: deck.owner})
+  const owner = await User.findOne({ _id: deck.owner });
   const foundUser = await User.findById({ _id: req.decoded._id });
 
   if (deck.like.indexOf(foundUser._id) > -1) {
@@ -99,11 +99,12 @@ const likeDeckGroup = async (req, res, next) => {
       creator: foundUser.userName,
       type: "like",
       title: `${foundUser.userName} đã thích bài viết của bạn`,
-      postId: deck._id
+      groupId: req.body.groupId,
+      postId: deck._id,
     });
-    await newNotification.save()
-    await owner.userNotification.push(newNotification._id)
-    await owner.save()
+    await newNotification.save();
+    await owner.userNotification.push(newNotification._id);
+    await owner.save();
   }
   deck.save();
 

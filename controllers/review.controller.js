@@ -63,6 +63,7 @@ const reviewDeckGroup = async (req, res, next) => {
     creator: foundUser.userName,
     type: "comment",
     title: `${foundUser.userName} đã bình luận trong bài viết của bạn`,
+    groupId:req.body.groupId,
     postId: deckGroup._id
   });
   await newNotification.save()

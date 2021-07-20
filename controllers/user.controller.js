@@ -61,12 +61,13 @@ const foundUser = async (req, res, next) => {
   let foundUser = await User.findOne({ _id: req.decoded._id })
     .populate("following")
     .populate("followers")
+    .populate("userChat")
     .populate("decks")
     .populate("deckShare")
     .populate("yearID")
     .populate("groups")
     .populate("decksGroup")
-    .populate("userNotification")
+    .populate({ path: "userNotification", populate: { path: "groupId" } })
     .populate("eventNotification")
     .exec();
   if (foundUser) {
@@ -114,7 +115,6 @@ const getUserDeck = async (req, res, next) => {
   return res.status(200).json({ success: true, decks: user.decks });
 };
 
-
 const index = async (req, res, next) => {
   const users = await User.find({});
   return res.status(200).json({ users });
@@ -151,7 +151,7 @@ const resetPassword = async (req, res, next) => {
   }
   foundUser.password = password;
   foundUser.emailToken = null;
-  await foundUser.save().catch(err => next(err))
+  await foundUser.save().catch((err) => next(err));
   return res
     .status(200)
     .json({ success: true, message: "cập nhật mật khẩu thành công" });

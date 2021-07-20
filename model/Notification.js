@@ -11,6 +11,13 @@ const NotificationSchema = new Schema({
   type: {
     type: String,
   },
+  groupName: {
+    type: String,
+  },
+  groupId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Group",
+  },
   created_at: {
     type: String,
     default: getDate(),

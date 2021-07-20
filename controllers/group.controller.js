@@ -130,6 +130,8 @@ const newDeckGroup = async (req, res, next) => {
     creator: owner.userName,
     type: "post",
     title: `${group.name} vừa có bài viết mới. Xem ngay nhé!`,
+    groupName:group.name,
+    groupId:group._id,
     postId: newDeck._id
   });
   for(let user of users){
