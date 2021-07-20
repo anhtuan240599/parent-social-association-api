@@ -42,7 +42,9 @@ const reviewDeck = async (req, res, next) => {
 
 const reviewDeckGroup = async (req, res, next) => {
   const review = new Review();
+  const foundUser = await User.findOne({ _id: req.decoded._id });
   const deckGroup = await DeckGroup.findById(req.params.deckID);
+  const owner = await User.findOne({_id: deckGroup.owner})
   const { headline, body } = req.body;
   review.headline = headline;
   review.body = body;
@@ -56,6 +58,14 @@ const reviewDeckGroup = async (req, res, next) => {
 
   await deckGroup.reviews.push(review._id);
   await deckGroup.save();
+  const newNotification = new Notification({
+    creator: foundUser.userName,
+    type: "comment",
+    postId: deckGroup._id
+  });
+  await newNotification.save()
+  await owner.userNotification.push(newNotification._id)
+  await owner.save()
 
   const saveReview = await review.save();
 

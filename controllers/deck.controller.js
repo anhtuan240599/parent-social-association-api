@@ -2,6 +2,7 @@ const User = require("../model/User");
 const Deck = require("../model/Deck");
 const DeckGroup = require("../model/DeckGroup");
 const cloudinary = require("../middlewares/cloudinary");
+const Notification = require('../model/Notification')
 const fullTextSearch = require("fulltextsearch");
 const Year = require("../model/Year");
 const fullTextSearchVi = fullTextSearch.vi;
@@ -60,7 +61,7 @@ const index = async (req, res, next) => {
 
 const likeDeck = async (req, res, next) => {
   const deck = await Deck.findById(req.params.deckID);
-
+  const owner = await User.findOne({_id: deck.owner})
   const foundUser = await User.findById({ _id: req.decoded._id });
 
   if (deck.like.indexOf(foundUser._id) > -1) {
@@ -69,6 +70,14 @@ const likeDeck = async (req, res, next) => {
   } else {
     deck.like.push(foundUser._id);
     var message = "like";
+    const newNotification = new Notification({
+      creator: foundUser.userName,
+      type: "like",
+      postId: deck._id
+    });
+    await newNotification.save()
+    await owner.userNotification.push(newNotification._id)
+    await owner.save()
   }
   deck.save();
 
@@ -77,7 +86,7 @@ const likeDeck = async (req, res, next) => {
 
 const likeDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.findById(req.params.deckID);
-
+  const owner = await User.findOne({_id: deck.owner})
   const foundUser = await User.findById({ _id: req.decoded._id });
 
   if (deck.like.indexOf(foundUser._id) > -1) {
@@ -86,6 +95,14 @@ const likeDeckGroup = async (req, res, next) => {
   } else {
     deck.like.push(foundUser._id);
     var message = "like";
+    const newNotification = new Notification({
+      creator: foundUser.userName,
+      type: "like",
+      postId: deck._id
+    });
+    await newNotification.save()
+    await owner.userNotification.push(newNotification._id)
+    await owner.save()
   }
   deck.save();
 
