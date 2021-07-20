@@ -5,8 +5,11 @@ const NotificationSchema = new Schema({
   creator: {
     type: String,
   },
+  title: {
+    type: String,
+  },
   type: {
-    type: String
+    type: String,
   },
   created_at: {
     type: String,
@@ -14,8 +17,8 @@ const NotificationSchema = new Schema({
   },
   postId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Deck"
-  }
+    ref: "Deck",
+  },
 });
 
 function getDate() {

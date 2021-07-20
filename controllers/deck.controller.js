@@ -72,7 +72,7 @@ const likeDeck = async (req, res, next) => {
     var message = "like";
     const newNotification = new Notification({
       creator: foundUser.userName,
-      type: "like",
+      title: `${foundUser.userName} đã thích bài viết của bạn`,
       postId: deck._id
     });
     await newNotification.save()
@@ -98,6 +98,7 @@ const likeDeckGroup = async (req, res, next) => {
     const newNotification = new Notification({
       creator: foundUser.userName,
       type: "like",
+      title: `${foundUser.userName} đã thích bài viết của bạn`,
       postId: deck._id
     });
     await newNotification.save()

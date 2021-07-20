@@ -233,7 +233,7 @@ const login = async (req, res, next) => {
 };
 
 const register = async (req, res, next) => {
-  const { name, email, password, yearID } = req.body;
+  const { userID, email, password, yearID } = req.body;
 
   const foundUser = await User.findOne({ email });
   if (foundUser)
@@ -241,7 +241,7 @@ const register = async (req, res, next) => {
       .status(403)
       .json({ error: { message: "Email is already in use" } });
 
-  const newUser = new User({ name, email, password, yearID });
+  const newUser = new User({ userID, email, password, yearID });
 
   await newUser.save();
 

@@ -231,6 +231,7 @@ const postEvent = async (req, res, next) => {
   const newNotification = new Notification({
     creator: "admin",
     type: "event",
+    title: `Nhà trường vừa thêm một thông báo mới`,
     postId: newEvent._id
   });
   await newNotification.save();

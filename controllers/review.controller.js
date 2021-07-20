@@ -29,6 +29,7 @@ const reviewDeck = async (req, res, next) => {
   const newNotification = new Notification({
     creator: foundUser.userName,
     type: "comment",
+    title: `${foundUser.userName} đã bình luận trong bài viết của bạn`,
     postId: deck._id
   });
   await newNotification.save()
@@ -61,6 +62,7 @@ const reviewDeckGroup = async (req, res, next) => {
   const newNotification = new Notification({
     creator: foundUser.userName,
     type: "comment",
+    title: `${foundUser.userName} đã bình luận trong bài viết của bạn`,
     postId: deckGroup._id
   });
   await newNotification.save()

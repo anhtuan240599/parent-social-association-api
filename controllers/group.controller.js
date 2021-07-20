@@ -1,5 +1,6 @@
 const User = require("../model/User");
 const DeckGroup = require("../model/DeckGroup");
+const Notification = require('../model/Notification')
 const cloudinary = require("../middlewares/cloudinary");
 const Group = require("../model/Group");
 const fullTextSearch = require("fulltextsearch");
@@ -98,8 +99,8 @@ const getDeckGroup = async (req, res, next) => {
 };
 const newDeckGroup = async (req, res, next) => {
   const owner = await User.findOne({ _id: req.decoded._id });
-
   const group = await Group.findById(req.params.groupID);
+  const users = await User.find({groups: req.params.groupID})
   const deck = req.body;
 
   delete deck.owner;
@@ -120,12 +121,22 @@ const newDeckGroup = async (req, res, next) => {
     newDeck.image = urls;
     newDeck.cloudinaryID = ids;
   }
-
   await newDeck.save();
   group.decks.push(newDeck._id);
   owner.decksGroup.push(newDeck._id);
   await owner.save();
   await group.save();
+  const newNotification = new Notification({
+    creator: owner.userName,
+    type: "post",
+    title: `${group.name} vừa có bài viết mới. Xem ngay nhé!`,
+    postId: newDeck._id
+  });
+  for(let user of users){
+    await user.userNotification.push(newNotification._id)
+    await user.save()
+  }
+  await newNotification.save()
 
   return res.status(201).json({ success: true, deck: newDeck });
 };
@@ -185,6 +196,25 @@ const newTeacherGroup = async (req, res, next) => {
   return res.status(201).json({ success: true, group: newGroup });
 };
 
+const newTeacherSubjectGroup = async (req, res, next) => {
+  const admin = await User.findOne({ _id: req.decoded._id });
+  const teachers = await User.find({ role: "teacher" , tag: req.body.subject });
+  const group = req.body;
+  group.admin = admin._id;
+  const newGroup = new Group(group);
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    newGroup.image = result.secure_url;
+  }
+  for (let teacher of teachers) {
+    await newGroup.users.push(teacher._id);
+    await teacher.groups.push(newGroup._id);
+    teacher.save();
+  }
+  await newGroup.save();
+  return res.status(201).json({ success: true, group: newGroup });
+};
+
 const updateGroup = async (req, res, next) => {
   const group = await Group.findById(req.params.groupID);
   if (group) {
@@ -213,6 +243,7 @@ module.exports = {
   getAllUsersOfAllGroup,
   newGroup,
   newTeacherGroup,
+  newTeacherSubjectGroup,
   joinGroup,
   getGroup,
   updateGroup,

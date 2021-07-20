@@ -35,4 +35,8 @@ router
   .route("/teachers/newGroup")
   .post(verifyToken, upload.single("image", 1), Group.newTeacherGroup);
 
+router
+  .route("/teachers/subject/newGroup")
+  .post(verifyToken, upload.single("image", 1), Group.newTeacherSubjectGroup);
+
 module.exports = router;
