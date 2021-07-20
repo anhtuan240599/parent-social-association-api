@@ -49,7 +49,13 @@ const UserSchema = new Schema({
       type: Schema.Types.ObjectId,
     },
   ],
-  notification: [
+  eventNotification: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Notification",
+    },
+  ],
+  userNotification: [
     {
       type: Schema.Types.ObjectId,
       ref: "Notification",

@@ -2,17 +2,20 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const NotificationSchema = new Schema({
-  title: {
-    require: true,
-    type: String,
-  },
   creator: {
     type: String,
+  },
+  type: {
+    type: String
   },
   created_at: {
     type: String,
     default: getDate(),
   },
+  postId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Deck"
+  }
 });
 
 function getDate() {
