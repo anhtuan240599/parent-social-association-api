@@ -39,6 +39,11 @@ const UserSchema = new Schema({
   emailToken: {
     type: String,
   },
+  userChat: [
+    {
+      type: Schema.Types.ObjectId,
+    },
+  ],
   following: [
     {
       type: Schema.Types.ObjectId,

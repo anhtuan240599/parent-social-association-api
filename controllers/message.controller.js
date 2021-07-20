@@ -4,7 +4,8 @@ const cloudinary = require("../middlewares/cloudinary");
 const sendMessage = async (req, res, next) => {
   const mess = new Message();
   const { message, to } = req.body;
-
+  const foundUser = await User.findOne({_id : req.decoded._id})
+  const friend = await User.findOne({_id:req.params.userID})
   mess.message = message;
   if (req.file) {
     const result = await cloudinary.uploader.upload(req.file.path);
@@ -14,6 +15,14 @@ const sendMessage = async (req, res, next) => {
   mess.to = req.params.userID;
 
   const save = await mess.save();
+  if(foundUser.userChat.indexOf(friend._id) == -1){
+    foundUser.userChat.push(friend._id)
+    foundUser.save()
+  }
+  if(friend.userChat.indexOf(foundUser._id) == -1){
+    friend.userChat.push(foundUser._id)
+    friend.save()
+  }
   if (save) {
     res.status(200).json({ success: true });
   }
@@ -33,8 +42,8 @@ const getUsers = async (req, res, next) => {
     },
     ["from", "to"]
   )
-    .populate("from", "userName")
-    .populate("to", "userName");
+    .populate("from", ["userName","avatar"])
+    .populate("to", ["userName","avatar"]);
   return res.status(200).json({ success: true, users: users });
 };
 
