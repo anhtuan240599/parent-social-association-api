@@ -47,7 +47,9 @@ const getMessage = async (req, res, next) => {
       },
       { to: req.decoded._id, from: req.params.userID },
     ],
-  });
+  })
+    .populate("from")
+    .populate("to");
 
   return res.status(200).json({ success: true, messages: messages });
 };
