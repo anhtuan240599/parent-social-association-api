@@ -66,7 +66,8 @@ const foundUser = async (req, res, next) => {
     .populate("yearID")
     .populate("groups")
     .populate("decksGroup")
-    .populate("notification")
+    .populate("userNotification")
+    .populate("eventNotification")
     .exec();
   if (foundUser) {
     return res.status(200).json({
