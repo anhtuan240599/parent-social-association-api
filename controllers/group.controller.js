@@ -1,6 +1,6 @@
 const User = require("../model/User");
 const DeckGroup = require("../model/DeckGroup");
-const Notification = require('../model/Notification')
+const Notification = require("../model/Notification");
 const cloudinary = require("../middlewares/cloudinary");
 const Group = require("../model/Group");
 const fullTextSearch = require("fulltextsearch");
@@ -75,7 +75,7 @@ const getUsersOfGroup = async (req, res, next) => {
 const getOneDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.findById(req.params.deckID)
     .populate("owner")
-    .populate("reviews")
+    .populate({ path: "reviews", populate: { path: "user" } })
     .exec();
 
   return res.status(200).json({ success: true, deck: deck });
@@ -100,7 +100,7 @@ const getDeckGroup = async (req, res, next) => {
 const newDeckGroup = async (req, res, next) => {
   const owner = await User.findOne({ _id: req.decoded._id });
   const group = await Group.findById(req.params.groupID);
-  const users = await User.find({groups: req.params.groupID})
+  const users = await User.find({ groups: req.params.groupID });
   const deck = req.body;
 
   delete deck.owner;
@@ -130,15 +130,15 @@ const newDeckGroup = async (req, res, next) => {
     creator: owner.userName,
     type: "post",
     title: `${group.name} vừa có bài viết mới. Xem ngay nhé!`,
-    groupName:group.name,
-    groupId:group._id,
-    postId: newDeck._id
+    groupName: group.name,
+    groupId: group._id,
+    postId: newDeck._id,
   });
-  for(let user of users){
-    await user.userNotification.push(newNotification._id)
-    await user.save()
+  for (let user of users) {
+    await user.userNotification.push(newNotification._id);
+    await user.save();
   }
-  await newNotification.save()
+  await newNotification.save();
 
   return res.status(201).json({ success: true, deck: newDeck });
 };
@@ -200,7 +200,7 @@ const newTeacherGroup = async (req, res, next) => {
 
 const newTeacherSubjectGroup = async (req, res, next) => {
   const admin = await User.findOne({ _id: req.decoded._id });
-  const teachers = await User.find({ role: "teacher" , tag: req.body.subject });
+  const teachers = await User.find({ role: "teacher", tag: req.body.subject });
   const group = req.body;
   group.admin = admin._id;
   const newGroup = new Group(group);

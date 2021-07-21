@@ -237,7 +237,7 @@ const postEvent = async (req, res, next) => {
   await newNotification.save();
   const users = await User.find();
   for (let user of users) {
-    user.EventNotification.push(newNotification._id);
+    user.eventNotification.push(newNotification._id);
     await user.save();
   }
   return res.status(200).json({
