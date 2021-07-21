@@ -5,6 +5,9 @@ const NotificationSchema = new Schema({
   creator: {
     type: String,
   },
+  userLike:[{
+    type: String
+  }],
   title: {
     type: String,
   },

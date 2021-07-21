@@ -88,6 +88,10 @@ const likeDeckGroup = async (req, res, next) => {
   const deck = await DeckGroup.findById(req.params.deckID);
   const owner = await User.findOne({ _id: deck.owner });
   const foundUser = await User.findById({ _id: req.decoded._id });
+  const foundNotification = await Notification.findOne({
+    postId: deck._id,
+    type: "like",
+  });
 
   if (deck.like.indexOf(foundUser._id) > -1) {
     deck.like.pull(foundUser._id);
@@ -95,16 +99,22 @@ const likeDeckGroup = async (req, res, next) => {
   } else {
     deck.like.push(foundUser._id);
     var message = "like";
-    const newNotification = new Notification({
-      creator: foundUser.userName,
-      type: "like",
-      title: `${foundUser.userName} đã thích bài viết của bạn`,
-      groupId: req.body.groupId,
-      postId: deck._id,
-    });
-    await newNotification.save();
-    await owner.userNotification.push(newNotification._id);
-    await owner.save();
+    if (foundNotification) {
+      foundNotification.userLike.push(foundUser.userName);
+      await foundNotification.save()
+    } else {
+      const newNotification = new Notification({
+        creator: foundUser.userName,
+        userLike: foundUser.userName,
+        type: "like",
+        title: `${foundUser.userName} đã thích bài viết của bạn`,
+        groupId: req.body.groupId,
+        postId: deck._id,
+      });
+      await newNotification.save();
+      await owner.userNotification.push(newNotification._id);
+      await owner.save();
+    }
   }
   deck.save();
 
