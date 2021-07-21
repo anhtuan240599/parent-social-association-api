@@ -75,8 +75,10 @@ const likeDeck = async (req, res, next) => {
     deck.like.push(foundUser._id);
     var message = "like";
     if (foundNotification) {
-      foundNotification.userLike.push(foundUser.userName);
-      await foundNotification.save();
+      if(foundNotification.userLike.indexOf(foundUser.userName) == -1){
+        foundNotification.userLike.push(foundUser.userName);
+        await foundNotification.save();
+      }
     } else {
       const newNotification = new Notification({
         creator: foundUser.userName,
