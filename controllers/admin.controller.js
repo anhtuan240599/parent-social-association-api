@@ -54,6 +54,7 @@ const addListTeacher = async (req, res, next) => {
 
         if (arrUsers.length) {
           return res.status(400).json({
+            userError: arrUsers,
             message: `userID : ${arrUsers} đã bị trùng vui lòng kiểm tra lại`,
           });
         }
@@ -111,6 +112,7 @@ const addListUser = async (req, res, next) => {
 
         if (arrUsers.length) {
           return res.status(400).json({
+            userError: arrUsers,
             message: `userID : ${arrUsers} đã bị trùng vui lòng kiểm tra lại`,
           });
         }
