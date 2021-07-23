@@ -29,7 +29,8 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Origin",
     "http://localhost:8888",
     "http://localhost:4000",
-    "https://thepsa.site"
+    "https://thepsa.site",
+    "https://thepsa.site/admin"
   ); // update to match the domain you will make the request from
   res.header(
     "Access-Control-Allow-Headers",
