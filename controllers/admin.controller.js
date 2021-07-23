@@ -54,6 +54,7 @@ const addListTeacher = async (req, res, next) => {
 
         if (arrUsers.length) {
           return res.status(400).json({
+            success: false,
             userError: arrUsers,
             message: `userID : ${arrUsers} đã bị trùng vui lòng kiểm tra lại`,
           });
@@ -112,6 +113,7 @@ const addListUser = async (req, res, next) => {
 
         if (arrUsers.length) {
           return res.status(400).json({
+            success: false,
             userError: arrUsers,
             message: `userID : ${arrUsers} đã bị trùng vui lòng kiểm tra lại`,
           });
@@ -234,7 +236,7 @@ const postEvent = async (req, res, next) => {
     creator: "admin",
     type: "event",
     title: `Nhà trường vừa thêm một thông báo mới`,
-    postId: newEvent._id
+    postId: newEvent._id,
   });
   await newNotification.save();
   const users = await User.find();
